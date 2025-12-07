@@ -1,30 +1,50 @@
 .container {
-  padding-top: 16rpx;
-  & > view:not(:last-child) {
-    margin-bottom: 32rpx;
-  }
+  width: 100%;
+  padding: 8rpx 24rpx 24rpx;
+  /* רווח עדין מסביב לדימר בתוך ה-Box */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  /* רווח בין הקלפים */
 }
 
+/* קלף אחד (בהירות / טמפרטורה) */
+.card {
+  width: 100%;
+  max-width: 680rpx;
+  /* דומה לרוחב שבאמצע המסך */
+  margin: 0 auto;
+  /* מרכז את הקלף */
+  padding: 24rpx 24rpx 28rpx;
+  border-radius: 32rpx;
+  background: rgba(8, 12, 20, 0.96);
+  box-shadow: 0 24rpx 80rpx rgba(0, 0, 0, 0.85);
+  border: 1rpx solid rgba(56, 189, 248, 0.4);
+  /* קצה זוהר עדין */
+  box-sizing: border-box;
+}
+
+/* שורת הטקסט למעלה (כותרת + ערך) */
 .textBox {
-  margin-bottom: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
 }
 
 .label {
   font-family: PingFang SC;
-  font-size: 28rpx;
-  font-weight: 600;
+  font-size: 26rpx;
+  font-weight: 500;
   line-height: 40rpx;
-  color: #fff;
+  color: rgba(248, 250, 252, 0.92);
 }
 
 .value {
   font-family: Manrope;
-  font-size: 28rpx;
-  font-weight: 600;
-  line-height: 38rpx;
-  color: rgba(16, 130, 254, 0.9);
-  &::before {
-    content: '·';
-    margin: 0 10rpx;
-  }
+  font-size: 24rpx;
+  font-weight: 500;
+  line-height: 36rpx;
+  color: rgba(248, 250, 252, 0.82);
 }

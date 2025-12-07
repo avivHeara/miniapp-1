@@ -1,5 +1,5 @@
 export default {
-  backgroundColor: 'black',
+  backgroundColor: '#0a0a0a',
   disableScroll: true,
   navigationStyle: 'custom',
   navigationBarTextStyle: 'white',

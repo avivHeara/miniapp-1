@@ -6,34 +6,29 @@ import { useThrottleFn } from 'ahooks';
 import LampTempSlider from '@ray-js/lamp-temp-slider';
 import LampBrightSlider from '@ray-js/lamp-bright-slider';
 import { lampSchemaMap } from '@/devices/schema';
-import Strings from '@/i18n';
 import styles from './index.module.less';
 
 const { bright_value, temp_value } = lampSchemaMap;
 
 interface IProps {
   style?: React.CSSProperties;
-  /**
-   * 色温值，不传则默认使用 DP temp_value
-   */
   temperature?: number;
-  /**
-   * 亮度值，不传则默认使用 DP bright_value
-   */
   brightness?: number;
   onRelease: (code: string, value: number) => void;
   onChange?: (isColor: boolean, value: { temperature: number; brightness: number }) => void;
   setScrollEnabled?: (v: boolean) => void;
 }
 
-export const White = (props: IProps) => {
+export const White: React.FC<IProps> = props => {
   const { style, onRelease, onChange, setScrollEnabled } = props;
 
   const support = useSupport();
+
   const brightnessDp = useProps(dpState => dpState.bright_value);
   const temperatureDp = useProps(dpState => dpState.temp_value);
   const brightness = isUndefined(props.brightness) ? brightnessDp : props.brightness;
   const temperature = isUndefined(props.temperature) ? temperatureDp : props.temperature;
+
   const isTouching = React.useRef(false);
 
   const handleTouchStart = React.useCallback(() => {
@@ -41,17 +36,22 @@ export const White = (props: IProps) => {
   }, []);
 
   const handleChange = useThrottleFn(
-    (key, value) => {
-      // slider调节时页面不能滑动
-      if (isTouching.current) setScrollEnabled?.(false);
-      if (key === 'temp') onChange?.(false, { temperature: value, brightness });
-      else onChange?.(false, { temperature, brightness: value });
+    (key: 'temp' | 'bright', value: number) => {
+      if (isTouching.current) {
+        setScrollEnabled?.(false);
+      }
+
+      if (key === 'temp') {
+        onChange?.(false, { temperature: value, brightness });
+      } else {
+        onChange?.(false, { temperature, brightness: value });
+      }
     },
     { wait: 80 }
   ).run;
 
   const handleWhiteRelease = useThrottleFn(
-    (code, value) => {
+    (code: string, value: number) => {
       isTouching.current = false;
       setScrollEnabled?.(true);
       onRelease?.(code, value);
@@ -59,27 +59,55 @@ export const White = (props: IProps) => {
     { wait: 80 }
   ).run;
 
+  // סליידר – גודל ורוחב
   const trackStyle = {
-    width: '656rpx',
-    height: '56rpx',
+    width: '100%',
+    height: '44rpx', // נמוך יותר, מודרני
+    borderRadius: '999rpx',
   };
 
   const thumbStyle = {
-    width: '68rpx',
-    height: '68rpx',
+    width: '60rpx',
+    height: '60rpx',
     borderRadius: '100%',
   };
 
-  const temperaturePercent = Math.round(utils.calcPosition(temperature, 0, 1000, 0, 100));
+  // בהירות באחוזים
   const brightnessPercent = Math.round(utils.calcPosition(brightness, 10, 1000, 1, 100));
+
+  // טמפרטורה – 0–1000 -> 2700K–6500K
+  const minKelvin = 2700;
+  const maxKelvin = 6500;
+  const temperatureKelvinRaw = utils.calcPosition(temperature, 0, 1000, minKelvin, maxKelvin);
+  const temperatureKelvin = Math.round(temperatureKelvinRaw / 50) * 50;
+  const temperatureLabel = temperatureKelvin < 4000 ? 'חם' : 'קר';
 
   return (
     <View style={style} className={styles.container}>
-      {support.isSupportTemp() && (
-        <View>
+      {/* בהירות */}
+      {support.isSupportBright() && (
+        <View className={styles.card}>
           <View className={styles.textBox}>
-            <Text className={styles.label}>{Strings.getLang('temp')}</Text>
-            <Text className={styles.value}>{`${temperaturePercent}%`}</Text>
+            <Text className={styles.label}>בהירות</Text>
+            <Text className={styles.value}>{`${brightnessPercent}%`}</Text>
+          </View>
+          <LampBrightSlider
+            value={brightness}
+            trackStyle={trackStyle}
+            thumbStyle={thumbStyle}
+            onTouchStart={handleTouchStart}
+            onTouchMove={bright => handleChange('bright', bright)}
+            onTouchEnd={bright => handleWhiteRelease(bright_value.code, bright)}
+          />
+        </View>
+      )}
+
+      {/* טמפרטורה */}
+      {support.isSupportTemp() && (
+        <View className={styles.card}>
+          <View className={styles.textBox}>
+            <Text className={styles.label}>טמפרטורה</Text>
+            <Text className={styles.value}>{`${temperatureKelvin}K ${temperatureLabel}`}</Text>
           </View>
           <LampTempSlider
             value={temperature}
@@ -88,25 +116,6 @@ export const White = (props: IProps) => {
             onTouchStart={handleTouchStart}
             onTouchMove={temp => handleChange('temp', temp)}
             onTouchEnd={temp => handleWhiteRelease(temp_value.code, temp)}
-          />
-        </View>
-      )}
-      {/* 亮度 */}
-      {support.isSupportBright() && (
-        <View>
-          <View className={styles.textBox}>
-            <Text className={styles.label}>{Strings.getLang('brightness')}</Text>
-            <Text className={styles.value}>{`${brightnessPercent}%`}</Text>
-          </View>
-          {/* FIXME: 加了个 View 作为临时的兼容方案，避免切换 TabBar 布局不更新 */}
-          <View />
-          <LampBrightSlider
-            value={brightness}
-            trackStyle={trackStyle}
-            thumbStyle={thumbStyle}
-            onTouchStart={handleTouchStart}
-            onTouchMove={bright => handleChange('bright', bright)}
-            onTouchEnd={bright => handleWhiteRelease(bright_value.code, bright)}
           />
         </View>
       )}

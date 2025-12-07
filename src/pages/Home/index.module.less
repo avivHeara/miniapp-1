@@ -1,602 +1,233 @@
-@import '../../variables.less';
-
-// ========================================
-// Page Container
-// ========================================
-.page {
-  overflow: hidden;
-  background: linear-gradient(135deg, @bg-primary 0%, @bg-secondary 50%, @bg-tertiary 100%);
-}
-
-.view {
-  width: 100%;
-  height: 100%;
-  min-height: 100vh;
+.pageContainer {
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(135deg, @bg-primary 0%, @bg-secondary 50%, @bg-tertiary 100%);
   direction: rtl;
+  background: radial-gradient(circle at top, #0f172a 0%, #020617 55%, #000000 100%);
 }
 
-// ========================================
-// Device Name Header
-// ========================================
-.devName {
-  padding: 1px 20px;
-  margin-bottom: 32rpx;
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 41px;
-  text-align: center;
-  color: @text-primary;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  width: 100%;
-}
+/* ===== HEADER ===== */
 
-// ========================================
-// Glass Card - כרטיסים שקופים
-// ========================================
-.greyCard {
-  border-radius: @radius-lg;
-  height: 132rpx;
+.headerBar {
+  display: flex;
   align-items: center;
-  padding: 48rpx 32rpx;
-  width: calc(50% - 8rpx);
   justify-content: space-between;
-  background: @glass-bg;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid @glass-border;
-  display: flex;
-  transition: all @transition-normal;
-
-  &:active {
-    transform: scale(0.98);
-    background: @glass-bg-hover;
-    border-color: @glass-border-hover;
-  }
-
-  &:not(:nth-child(1)):not(:nth-child(2)) {
-    margin-top: 18rpx;
-  }
-
-  .funcTitle {
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 20px;
-    color: @text-secondary;
-  }
+  padding: 24rpx 24rpx 0;
+  box-sizing: border-box;
+  margin-bottom: 12rpx;
+  /* רווח מתחת להדר */
 }
 
-// ========================================
-// Buttons
-// ========================================
-.button {
-  display: flex;
-  flex-direction: column;
-  height: 80rpx;
-  border-radius: 40rpx;
-  justify-content: center;
-  margin-left: 40rpx;
-  margin-right: 40rpx;
-  margin-top: 40rpx;
-  width: 90%;
-  color: white;
-  position: relative;
-  background: linear-gradient(135deg, @primary-color-light 0%, @primary-color 100%);
-  box-shadow: 0 10rpx 30rpx @switch-on-glow;
-  transition: all @transition-normal;
-
-  &:active {
-    transform: translateY(2rpx);
-    box-shadow: 0 5rpx 15rpx @switch-on-glow;
-  }
-}
-
-// ========================================
-// Row Layout
-// ========================================
-.row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  flex-wrap: wrap;
-
-  .icon {
-    margin-right: 18rpx;
-    width: 48rpx;
-    height: 48rpx;
-  }
-
-  .label {
-    font-size: 28rpx;
-    font-weight: 400;
-    color: @text-secondary;
-  }
-
-  .value {
-    font-size: 28rpx;
-    font-weight: 600;
-    color: @secondary-color;
-  }
-}
-
-// ========================================
-// Section Title
-// ========================================
-.title {
-  margin-bottom: 18rpx;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 20px;
-  text-align: right;
-  color: @text-primary;
-}
-
-// ========================================
-// Utilities
-// ========================================
-.center {
-  justify-content: center;
-  align-items: center;
-}
-
-.flexCenter {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.flex1 {
-  flex: 1;
-}
-
-.disabled {
-  opacity: 0.3;
-  pointer-events: none;
-}
-
-.image {
-  width: 80px;
-  height: 80px;
-}
-
-// ========================================
-// Main Switch - כפתור ON/OFF
-// ========================================
-.mainSwitch {
-  width: 320rpx;
-  height: 320rpx;
-  border-radius: @radius-circle;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 40rpx auto;
-  transition: all @transition-normal;
-  border: 4rpx solid transparent;
-
-  &.switchOn {
-    background: linear-gradient(135deg, @switch-on-start 0%, @switch-on-mid 50%, @switch-on-end 100%);
-    box-shadow:
-      0 20rpx 60rpx @switch-on-glow,
-      0 0 100rpx rgba(255, 107, 0, 0.3);
-    border-color: rgba(255, 140, 66, 0.8);
-  }
-
-  &.switchOff {
-    background: linear-gradient(135deg, @switch-off-start 0%, @switch-off-end 100%);
-    box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.3);
-    border-color: rgba(100, 120, 140, 0.3);
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-}
-
-.switchIcon {
-  font-size: 80rpx;
-  margin-bottom: 16rpx;
-}
-
-.switchText {
-  font-size: 36rpx;
-  font-weight: 700;
-  color: @text-primary;
-}
-
-// ========================================
-// Work Mode Selector - בחירת מצב
-// ========================================
-.workModeSelector {
-  display: flex;
-  gap: 12rpx;
-  padding: 12rpx;
-  margin: 0 32rpx 32rpx;
-  background: @glass-bg;
-  border-radius: @radius-lg;
-  border: 1px solid @glass-border;
-}
-
-.workModeBtn {
-  flex: 1;
-  padding: 24rpx 16rpx;
-  border-radius: @radius-md;
-  text-align: center;
-  transition: all @transition-normal;
-  background: transparent;
-
-  &.active {
-    background: linear-gradient(135deg, @primary-color-light 0%, @primary-color 100%);
-    box-shadow: 0 8rpx 24rpx @switch-on-glow;
-  }
-
-  &:active {
-    transform: scale(0.98);
-  }
-}
-
-.workModeText {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: @text-primary;
-}
-
-// ========================================
-// Quick Scenes - סצנות מהירות
-// ========================================
-.quickScenes {
-  margin: 32rpx;
-  padding: 32rpx;
-  background: @glass-bg;
-  border-radius: @radius-lg;
-  border: 1px solid @glass-border;
-}
-
-.scenesGrid {
-  display: flex;
-  gap: 16rpx;
-  margin-top: 24rpx;
-}
-
-.sceneBtn {
-  flex: 1;
-  padding: 24rpx 8rpx;
-  border-radius: @radius-md;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all @transition-normal;
-
-  &:active {
-    transform: scale(0.95);
-  }
-
-  &.wakeup:active {
-    background: linear-gradient(135deg, @scene-wakeup, darken(@scene-wakeup, 10%));
-  }
-
-  &.sleep:active {
-    background: linear-gradient(135deg, @scene-sleep, darken(@scene-sleep, 10%));
-  }
-
-  &.full:active {
-    background: linear-gradient(135deg, @scene-full, darken(@scene-full, 10%));
-  }
-
-  &.romantic:active {
-    background: linear-gradient(135deg, @scene-romantic, darken(@scene-romantic, 10%));
-  }
-}
-
-.sceneIcon {
-  font-size: 48rpx;
-  display: block;
-  margin-bottom: 8rpx;
-}
-
-.sceneText {
-  font-size: 24rpx;
-  font-weight: 500;
-  color: @text-primary;
-}
-
-// ========================================
-// Slider Styling
-// ========================================
-.sliderContainer {
-  margin: 32rpx;
-  padding: 32rpx;
-  background: @glass-bg;
-  border-radius: @radius-lg;
-  border: 1px solid @glass-border;
-}
-
-.sliderLabel {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: @text-primary;
-  margin-bottom: 16rpx;
-}
-
-.sliderValue {
-  font-size: 36rpx;
-  font-weight: 700;
-  color: @primary-color;
-  text-align: center;
-  margin-bottom: 16rpx;
-}
-
-// ========================================
-// Device Selector - בחירת מנורה + כפתור עריכה
-// ========================================
-.deviceSelectorWrapper {
-  padding: 0 32rpx;
-  margin: 24rpx 0;
-}
-
-.deviceSelectorContainer {
-  display: flex;
-  align-items: center;
-  gap: 16rpx;
-}
-
-.deviceSelectorTrack {
-  flex: 1;
-  position: relative;
+.headerBtn {
+  width: 72rpx;
   height: 72rpx;
-  border-radius: 9999rpx;
-  background: rgba(0, 0, 0, 0.45);
-  border: 1rpx solid fade(@glass-border, 70%);
+  border-radius: 999rpx;
+  border: 1rpx solid rgba(148, 163, 184, 0.4);
   display: flex;
-  align-items: stretch;
+  align-items: center;
+  justify-content: center;
+}
+
+.headerBtnText {
+  font-size: 32rpx;
+  color: #e5e7eb;
+}
+
+.headerCenter {
+  flex: 1;
+  margin: 0 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.headerTitle {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #f9fafb;
+}
+
+.headerEditBtn {
+  margin-right: 16rpx;
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 999rpx;
+  background: rgba(15, 23, 42, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.headerEditText {
+  font-size: 26rpx;
+}
+
+/* ===== DEVICE SELECTOR ===== */
+
+.deviceSelector {
+  padding: 0 24rpx;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+  /* רווח מתחת לבחירת מנורה */
+}
+
+.deviceTabs {
+  position: relative;
+  flex: 1;
+  height: 64rpx;
+  border-radius: 999rpx;
+  background: rgba(15, 23, 42, 0.9);
+  display: flex;
   overflow: hidden;
 }
 
-.deviceSelectorThumb {
+.deviceThumb {
   position: absolute;
   top: 4rpx;
   bottom: 4rpx;
-  border-radius: 9999rpx;
-  background: linear-gradient(135deg, #ff8c42 0%, #ff6b00 100%);
-  box-shadow: 0 4rpx 16rpx rgba(255, 107, 0, 0.4);
-  transition: left 0.25s ease-out;
-}
-
-.deviceSelectorItem {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1;
-}
-
-.deviceSelectorText {
-  font-size: 26rpx;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.6);
-  transition: color 0.25s ease;
-}
-
-.deviceSelectorTextActive {
-  color: #ffffff;
-  font-weight: 700;
-}
-
-// כפתור עריכת מכשירים
-.editDevicesBtn {
-  width: 72rpx;
-  height: 72rpx;
-  border-radius: 50%;
-  background: rgba(0, 217, 255, 0.15);
-  border: 1px solid rgba(0, 217, 255, 0.3);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: all 0.2s ease;
-
-  &:active {
-    background: rgba(0, 217, 255, 0.3);
-    transform: scale(0.95);
-  }
-}
-
-.editDevicesBtnText {
-  font-size: 28rpx;
-}
-
-// ========================================
-// Feature Cards - שבת וטיימר
-// ========================================
-.featuresContainer {
-  padding: 0 32rpx;
-  margin-top: 32rpx;
-}
-
-.featureCard {
-  background: @glass-bg;
-  backdrop-filter: blur(10px);
-  border-radius: @radius-lg;
-  border: 1px solid @glass-border;
-  padding: 32rpx;
-  margin-bottom: 24rpx;
-  transition: all @transition-normal;
-
-  &.shabbat {
-    border-color: rgba(139, 92, 246, 0.3);
-  }
-
-  &.timer {
-    border-color: rgba(0, 217, 255, 0.3);
-  }
-}
-
-.featureHeader {
-  display: flex;
-  align-items: center;
-  gap: 16rpx;
-  margin-bottom: 20rpx;
-}
-
-.featureIcon {
-  font-size: 40rpx;
-}
-
-.featureTitle {
-  flex: 1;
-  font-size: 32rpx;
-  font-weight: 600;
-  color: @text-primary;
-}
-
-.featureToggle {
-  padding: 12rpx 24rpx;
-  border-radius: @radius-xl;
-  background: @glass-bg;
-  border: 1px solid @glass-border;
-  transition: all @transition-normal;
-
-  &.active,
-  &.featureToggleOn {
-    background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
-    border-color: #a78bfa;
-  }
-}
-
-.featureToggleOn {
-  background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
-  border-color: #a78bfa;
-}
-
-.toggleText,
-.featureToggleText {
-  font-size: 24rpx;
-  font-weight: 600;
-  color: @text-primary;
-}
-
-.timerCountdown {
-  font-size: 28rpx;
-  color: @secondary-color;
-  margin-bottom: 16rpx;
-  display: block;
-}
-
-.featureBtn {
-  padding: 24rpx;
-  border-radius: @radius-md;
-  background: linear-gradient(135deg, @secondary-color-light 0%, @secondary-color 100%);
-  text-align: center;
-  transition: all 0.2s ease;
-
-  &:active {
-    transform: scale(0.98);
-    opacity: 0.9;
-  }
-}
-
-.featureBtnText {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: @bg-primary;
-}
-
-// ========================================
-// LTR Container
-// ========================================
-.ltrContainer {
-  direction: ltr;
-}
-
-/* === מגירה תחתונה נשלפת מתחת לכפתור ההפעלה === */
-
-.bottomDrawer {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 103rpx; // תואם לגובה ה-ControlBar
-  background: rgba(5, 12, 32, 0.98);
-  border-radius: 24rpx 24rpx 0 0;
-  box-shadow: 0 -8rpx 24rpx rgba(0, 0, 0, 0.5);
-  transform: translateY(70%); // מצב סגור – רואים רק חלק מהמגירה
-  transition: transform 0.25s ease-out;
-  overflow: hidden;
-  z-index: 10;
-}
-
-.bottomDrawerOpen {
-  transform: translateY(0); // מצב פתוח
-}
-
-.drawerHandle {
-  width: 120rpx;
-  height: 10rpx;
   border-radius: 999rpx;
-  background: rgba(255, 255, 255, 0.4);
-  margin: 16rpx auto 8rpx;
+  background: linear-gradient(90deg, #38bdf8, #a855f7);
+  transition: left 0.25s ease;
 }
 
-.drawerContent {
-  max-height: 60vh;
-  padding: 0 24rpx 24rpx;
+.deviceTab {
+  flex: 1;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* המסכה מאחורי המגירה */
-.drawerMask {
-  position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0);
-  pointer-events: none;
-  z-index: 9;
-  transition: background 0.2s ease-out;
+.deviceTabText {
+  font-size: 24rpx;
+  color: #9ca3af;
 }
 
-.drawerMaskVisible {
-  background: rgba(0, 0, 0, 0.55);
-  pointer-events: auto;
+.deviceTabTextActive {
+  color: #f9fafb;
+  font-weight: 600;
 }
 
-.bottomDrawer {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 103rpx; // גובה ה-ControlBar
-  background: transparent;
-  /* הרקע מגיע מהתמונה ומה-content */
-  transform: translateY(70%);
-  /* מצב סגור – רואים רק קצת למעלה */
-  transition: transform 0.25s ease-out;
-  z-index: 10;
+.editBtn {
+  margin-right: 16rpx;
+  display: flex;
+  align-items: center;
 }
 
-.bottomDrawerOpen {
-  transform: translateY(0);
-  /* פתוח */
+.editBtnIcon {
+  margin-left: 6rpx;
 }
 
-/* החלק העליון עם המגרעת */
-.drawerHeader {
-  width: 100%;
-  overflow: hidden;
+.editBtnText {
+  font-size: 22rpx;
+  color: #9ca3af;
 }
 
-.drawerHeaderBg {
-  width: 100%;
-  display: block;
+/* ===== MODE TABS ===== */
+
+.modeTabs {
+  padding: 0 24rpx;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+  /* רווח לפני הדימר */
 }
 
-/* התוכן שמופיע בתוך המגירה מתחת לצורה */
-.drawerContent {
-  max-height: 60vh;
-  padding: 24rpx 24rpx 32rpx;
-  background: #020922;
-  /* צבע הרקע של הפאנל שמתחת לתמונה */
-  border-radius: 0 0 24rpx 24rpx;
-  box-shadow: 0 -8rpx 24rpx rgba(0, 0, 0, 0.5);
+.modeTab {
+  flex: 1;
+  margin: 0 4rpx;
+  padding: 16rpx 0;
+  border-radius: 999rpx;
+  background: rgba(15, 23, 42, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.modeTabActive {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(147, 51, 234, 0.9));
+}
+
+.modeTabIcon {
+  font-size: 26rpx;
+  margin-bottom: 4rpx;
+}
+
+.modeTabText {
+  font-size: 22rpx;
+  color: #9ca3af;
+}
+
+.modeTabTextActive {
+  color: #f9fafb;
+  font-weight: 600;
+}
+
+/* ===== CONTENT / DIMMER ===== */
+
+.contentArea {
+  flex: 1;
+}
+
+.contentWrapper {
+  min-height: 100%;
+  padding: 8rpx 24rpx 40rpx;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.dimmerContainer {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin-top: 0;
+}
+
+.disabled {
+  opacity: 0.4;
+}
+
+/* ===== BOTTOM NAV ===== */
+
+.bottomNav {
+  height: 100rpx;
+  padding: 0 16rpx;
+  box-sizing: border-box;
+  background: rgba(15, 23, 42, 0.98);
+  border-top: 1rpx solid rgba(15, 23, 42, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.navItemActive {}
+
+.navIcon {
+  font-size: 28rpx;
+  margin-bottom: 2rpx;
+}
+
+.navLabel {
+  font-size: 20rpx;
+  color: #9ca3af;
+}
+
+.navLabelActive {
+  color: #f9fafb;
+  font-weight: 600;
 }

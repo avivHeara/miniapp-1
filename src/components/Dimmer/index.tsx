@@ -26,6 +26,10 @@ interface IProps {
   className?: string;
   contentClassName?: string;
   showTitle?: boolean;
+  /** הסתר את הטאבים הפנימיים - להשתמש כשיש טאבים חיצוניים */
+  hideTabs?: boolean;
+  /** הסתר את צבעי האוסף */
+  hideCollectColors?: boolean;
   mode: WorkMode;
   temperature: number;
   brightness: number;
@@ -34,15 +38,17 @@ interface IProps {
   validWorkMode?: WorkMode[];
   onModeChange?: (v: string) => void;
   /**
-   * 收藏彩光颜色选中或色温、亮度、彩光色相、饱和度、亮度选中回调
+   * בחר את צבע האור הצבעוני שנאסף, או בחר טמפרטורת צבע, 
+   * בהירות, גוון, רוויה או בהירות, ולאחר מכן לחץ חזור.
    */
   onRelease: (code: string, value: any) => void;
   /**
-   * 收藏白光选中回调
+   * אור לבן שנבחר במועדפים - התקשרות חוזרת
    */
   onReleaseWhite: (cmd: DpState) => void;
   /**
-   * 彩光色相、饱和度、亮度或白光的色温、亮度变更的回调
+   * התאמות לשינויים בגוון, רוויה ובהירות של אור צבעוני, 
+   * או טמפרטורת צבע ובהירות של אור לבן.
    */
   onChange?: (isColor: boolean, value: any) => void;
   setScrollEnabled?: (v: boolean) => void;
@@ -51,6 +57,8 @@ interface IProps {
 export const Dimmer = React.memo((props: IProps) => {
   const {
     showTitle,
+    hideTabs = false,
+    hideCollectColors = false,
     mode,
     style,
     className,
@@ -69,7 +77,7 @@ export const Dimmer = React.memo((props: IProps) => {
 
   const support = useSupport();
 
-  // 根据支持的路数生成 tabBar
+  // צור סרגל טאב בהתבסס על מספר הנתיבים הנתמכים
   const workModeTabs = useCreation(() => {
     const tabs = [];
     if ((support.isSupportTemp() || support.isSupportBright()) && validWorkMode.includes('white')) {
@@ -127,7 +135,8 @@ export const Dimmer = React.memo((props: IProps) => {
       contentClassName={contentClassName}
       title={showTitle ? Strings.getLang('dimming') : ''}
     >
-      {workModeTabs.length > 1 && (
+      {/* הצג טאבים רק אם hideTabs=false */}
+      {!hideTabs && workModeTabs.length > 1 && (
         <TabBar
           itemWidth={`${100 / (workModeTabs.length ?? 2)}%`}
           itemHeight={56}
@@ -136,7 +145,9 @@ export const Dimmer = React.memo((props: IProps) => {
           onClick={v => onModeChange?.(v)}
         />
       )}
-      {['white', 'colour'].indexOf(mode) !== -1 && (
+
+      {/* הצג צבעי אוסף רק אם hideCollectColors=false */}
+      {/* {!hideCollectColors && ['white', 'colour'].indexOf(mode) !== -1 && (
         <CollectColors
           style={{ justifyContent: 'start', width: '100%', margin: '32rpx 0' }}
           showAdd={canEdit}
@@ -146,7 +157,8 @@ export const Dimmer = React.memo((props: IProps) => {
           temperature={temperature}
           chooseColor={data => handleChooseColor?.(data)}
         />
-      )}
+      )} */}
+
       {DimmerContent}
     </Box>
   );
