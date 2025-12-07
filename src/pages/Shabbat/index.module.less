@@ -1,0 +1,253 @@
+@import '../../variables.less';
+
+.container {
+  min-height: 100vh;
+  padding: 32rpx;
+  background: linear-gradient(135deg, @bg-primary 0%, @bg-secondary 50%, @bg-tertiary 100%);
+  direction: rtl;
+}
+
+.mainToggle {
+  background: @glass-bg;
+  border-radius: @radius-lg;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  padding: 32rpx;
+  margin-bottom: 32rpx;
+}
+
+.toggleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toggleLabel {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: @text-primary;
+}
+
+.toggle {
+  padding: 16rpx 32rpx;
+  border-radius: @radius-xl;
+  background: @glass-bg;
+  border: 1px solid @glass-border;
+  transition: all 0.3s ease;
+}
+
+.toggleOn {
+  background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+  border-color: #a78bfa;
+}
+
+.toggleText {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: @text-primary;
+}
+
+.section {
+  background: @glass-bg;
+  border-radius: @radius-lg;
+  border: 1px solid @glass-border;
+  padding: 32rpx;
+  margin-bottom: 32rpx;
+}
+
+.sectionTitle {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: @text-primary;
+  margin-bottom: 24rpx;
+  display: block;
+}
+
+.daySelector {
+  display: flex;
+  gap: 16rpx;
+}
+
+.dayBtn {
+  flex: 1;
+  padding: 24rpx;
+  border-radius: @radius-md;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid @glass-border;
+  text-align: center;
+  transition: all 0.3s ease;
+
+  &.active {
+    background: linear-gradient(135deg, @primary-color-light 0%, @primary-color 100%);
+    border-color: @primary-color;
+  }
+}
+
+.dayText {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: @text-primary;
+}
+
+.timeRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.timeLabel {
+  font-size: 28rpx;
+  color: @text-secondary;
+}
+
+.timeValue {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: @secondary-color;
+}
+
+.sceneCard {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: @radius-md;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sceneHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.sceneTitle {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: @text-primary;
+}
+
+.sceneToggle {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background: @glass-bg;
+  border: 1px solid @glass-border;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+
+  &.active {
+    background: @success-color;
+    border-color: @success-color;
+  }
+}
+
+.sceneToggleText {
+  font-size: 24rpx;
+  color: @text-primary;
+}
+
+.sceneContent {
+  padding-top: 16rpx;
+}
+
+.sceneRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+
+.sceneLabel {
+  font-size: 24rpx;
+  color: @text-tertiary;
+}
+
+.sceneValue {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: @text-primary;
+}
+
+// תיקון כיוון הסליידר - LTR
+.sliderWrapper {
+  direction: ltr;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  margin-bottom: 32rpx;
+}
+
+.btnPrimary {
+  padding: 28rpx;
+  border-radius: @radius-lg;
+  background: linear-gradient(135deg, @primary-color-light 0%, @primary-color 100%);
+  text-align: center;
+  box-shadow: 0 8rpx 24rpx rgba(255, 107, 0, 0.3);
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.btnSecondary {
+  padding: 28rpx;
+  border-radius: @radius-lg;
+  background: linear-gradient(135deg, @secondary-color-light 0%, @secondary-color 100%);
+  text-align: center;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.btnText {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: @text-primary;
+}
+
+.errorBox {
+  background: rgba(255, 77, 79, 0.2);
+  border: 1px solid @error-color;
+  border-radius: @radius-lg;
+  padding: 24rpx;
+  margin-bottom: 32rpx;
+}
+
+.errorText {
+  font-size: 26rpx;
+  color: @error-color;
+  text-align: center;
+}
+
+.debugSection {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: @radius-lg;
+  padding: 24rpx;
+  margin-top: 32rpx;
+}
+
+.debugTitle {
+  font-size: 24rpx;
+  color: @text-tertiary;
+  margin-bottom: 16rpx;
+  display: block;
+}
+
+.debugText {
+  font-size: 22rpx;
+  color: @text-tertiary;
+  font-family: monospace;
+  display: block;
+  margin-bottom: 8rpx;
+}

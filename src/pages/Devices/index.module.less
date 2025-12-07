@@ -1,0 +1,144 @@
+@import '../../variables.less';
+
+.container {
+  min-height: 100vh;
+  padding: 32rpx;
+  background: linear-gradient(135deg, @bg-primary 0%, @bg-secondary 50%, @bg-tertiary 100%);
+  direction: rtl;
+}
+
+.section {
+  background: @glass-bg;
+  border-radius: @radius-lg;
+  border: 1px solid @glass-border;
+  padding: 32rpx;
+  margin-bottom: 32rpx;
+}
+
+.sectionTitle {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: @text-primary;
+  margin-bottom: 24rpx;
+  display: block;
+}
+
+.inputGroup {
+  margin-bottom: 24rpx;
+}
+
+.inputLabel {
+  font-size: 28rpx;
+  color: @text-secondary;
+  margin-bottom: 12rpx;
+  display: block;
+}
+
+.input {
+  width: 100%;
+  padding: 24rpx;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid @glass-border;
+  border-radius: @radius-md;
+  color: @text-primary;
+  font-size: 28rpx;
+
+  &::placeholder {
+    color: @text-tertiary;
+  }
+}
+
+.toggleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toggleLabel {
+  font-size: 28rpx;
+  color: @text-secondary;
+}
+
+.toggle {
+  padding: 16rpx 32rpx;
+  border-radius: @radius-xl;
+  background: @glass-bg;
+  border: 1px solid @glass-border;
+  transition: all 0.3s ease;
+}
+
+.toggleOn {
+  background: linear-gradient(135deg, @secondary-color-light 0%, @secondary-color 100%);
+  border-color: @secondary-color;
+}
+
+.toggleText {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: @text-primary;
+}
+
+.btnPrimary {
+  padding: 28rpx;
+  border-radius: @radius-lg;
+  background: linear-gradient(135deg, @primary-color-light 0%, @primary-color 100%);
+  text-align: center;
+  margin-top: 24rpx;
+  box-shadow: 0 8rpx 24rpx rgba(255, 107, 0, 0.3);
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.btnSecondary {
+  padding: 28rpx;
+  border-radius: @radius-lg;
+  background: linear-gradient(135deg, @secondary-color-light 0%, @secondary-color 100%);
+  text-align: center;
+  margin-bottom: 16rpx;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.btnDanger {
+  padding: 28rpx;
+  border-radius: @radius-lg;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff4757 100%);
+  text-align: center;
+  margin-top: 24rpx;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.btnText {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: @text-primary;
+}
+
+.debugSection {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: @radius-lg;
+  padding: 24rpx;
+  margin-top: 32rpx;
+}
+
+.debugTitle {
+  font-size: 24rpx;
+  color: @text-tertiary;
+  margin-bottom: 16rpx;
+  display: block;
+}
+
+.debugText {
+  font-size: 22rpx;
+  color: @text-tertiary;
+  font-family: monospace;
+  display: block;
+  margin-bottom: 8rpx;
+}

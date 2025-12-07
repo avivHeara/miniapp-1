@@ -1,0 +1,215 @@
+@import '../../variables.less';
+
+.container {
+  min-height: 100vh;
+  padding: 32rpx;
+  background: linear-gradient(135deg, @bg-primary 0%, @bg-secondary 50%, @bg-tertiary 100%);
+  direction: rtl;
+}
+
+.section {
+  background: @glass-bg;
+  border-radius: @radius-lg;
+  border: 1px solid @glass-border;
+  padding: 32rpx;
+  margin-bottom: 32rpx;
+}
+
+.sectionTitle {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: @text-primary;
+  margin-bottom: 8rpx;
+  display: block;
+}
+
+.sectionDesc {
+  font-size: 24rpx;
+  color: @text-tertiary;
+  margin-bottom: 32rpx;
+  display: block;
+}
+
+.countdownDisplay {
+  background: rgba(0, 217, 255, 0.1);
+  border: 1px solid rgba(0, 217, 255, 0.3);
+  border-radius: @radius-lg;
+  padding: 32rpx;
+  text-align: center;
+  margin-bottom: 32rpx;
+}
+
+.countdownLabel {
+  font-size: 26rpx;
+  color: @text-secondary;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.countdownValue {
+  font-size: 64rpx;
+  font-weight: 700;
+  color: @secondary-color;
+  font-family: monospace;
+}
+
+// Layout אנכי - + למעלה, ערך באמצע, - למטה
+.timeSetters {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 32rpx;
+  direction: ltr;  // תיקון כיוון
+}
+
+.timeSetter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.setterLabel {
+  font-size: 24rpx;
+  color: @text-tertiary;
+  margin-bottom: 8rpx;
+}
+
+.setterBtn {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: @glass-bg;
+  border: 1px solid @glass-border;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 36rpx;
+  font-weight: 600;
+  color: @text-primary;
+  line-height: 64rpx;
+  text-align: center;
+
+  &:active {
+    background: @primary-color;
+    border-color: @primary-color;
+  }
+}
+
+.setterValue {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: @text-primary;
+  min-width: 80rpx;
+  text-align: center;
+  font-family: monospace;
+  padding: 16rpx 0;
+}
+
+.presets {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 32rpx;
+  flex-wrap: wrap;
+}
+
+.presetBtn {
+  flex: 1;
+  min-width: calc(50% - 16rpx);
+  padding: 20rpx;
+  border-radius: @radius-md;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid @glass-border;
+  text-align: center;
+  transition: all 0.3s ease;
+
+  &:active {
+    background: @primary-color;
+    border-color: @primary-color;
+  }
+}
+
+.presetText {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: @text-primary;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.btnPrimary {
+  padding: 28rpx;
+  border-radius: @radius-lg;
+  background: linear-gradient(135deg, @primary-color-light 0%, @primary-color 100%);
+  text-align: center;
+  box-shadow: 0 8rpx 24rpx rgba(255, 107, 0, 0.3);
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.btnSecondary {
+  padding: 28rpx;
+  border-radius: @radius-lg;
+  background: linear-gradient(135deg, @secondary-color-light 0%, @secondary-color 100%);
+  text-align: center;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.btnDanger {
+  padding: 28rpx;
+  border-radius: @radius-lg;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff4757 100%);
+  text-align: center;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.btnText {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: @text-primary;
+}
+
+.comingSoon {
+  padding: 48rpx;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: @radius-md;
+}
+
+.comingSoonText {
+  font-size: 28rpx;
+  color: @text-tertiary;
+}
+
+.debugSection {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: @radius-lg;
+  padding: 24rpx;
+  margin-top: 32rpx;
+}
+
+.debugTitle {
+  font-size: 24rpx;
+  color: @text-tertiary;
+  margin-bottom: 16rpx;
+  display: block;
+}
+
+.debugText {
+  font-size: 22rpx;
+  color: @text-tertiary;
+  font-family: monospace;
+  display: block;
+  margin-bottom: 8rpx;
+}

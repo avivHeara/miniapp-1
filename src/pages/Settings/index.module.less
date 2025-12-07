@@ -1,0 +1,190 @@
+@import '../../variables.less';
+
+.container {
+  min-height: 100vh;
+  padding: 32rpx;
+  background: linear-gradient(135deg, @bg-primary 0%, @bg-secondary 50%, @bg-tertiary 100%);
+  direction: rtl;
+}
+
+.section {
+  background: @glass-bg;
+  border-radius: @radius-lg;
+  border: 1px solid @glass-border;
+  padding: 32rpx;
+  margin-bottom: 32rpx;
+}
+
+.sectionTitle {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: @text-primary;
+  margin-bottom: 24rpx;
+  display: block;
+}
+
+.sliderGroup {
+  margin-bottom: 32rpx;
+  padding-bottom: 24rpx;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+  &:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+}
+
+.sliderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.sliderLabel {
+  font-size: 28rpx;
+  color: @text-primary;
+}
+
+.sliderValue {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: @primary-color;
+}
+
+// תיקון כיוון הסליידר
+.sliderWrapper {
+  direction: ltr;
+}
+
+.sliderHint {
+  font-size: 22rpx;
+  color: @text-tertiary;
+  margin-top: 12rpx;
+  display: block;
+}
+
+.toggleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toggleLabel {
+  font-size: 28rpx;
+  color: @text-primary;
+  display: block;
+}
+
+.toggleHint {
+  font-size: 22rpx;
+  color: @text-tertiary;
+  margin-top: 4rpx;
+}
+
+.toggle {
+  padding: 16rpx 32rpx;
+  border-radius: @radius-xl;
+  background: @glass-bg;
+  border: 1px solid @glass-border;
+  transition: all 0.3s ease;
+}
+
+.toggleOn {
+  background: linear-gradient(135deg, @secondary-color-light 0%, @secondary-color 100%);
+  border-color: @secondary-color;
+}
+
+.toggleText {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: @text-primary;
+}
+
+.btnSecondary {
+  padding: 28rpx;
+  border-radius: @radius-lg;
+  background: linear-gradient(135deg, @secondary-color-light 0%, @secondary-color 100%);
+  text-align: center;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.btnText {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: @text-primary;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 16rpx 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.infoLabel {
+  font-size: 26rpx;
+  color: @text-tertiary;
+}
+
+.infoValue {
+  font-size: 26rpx;
+  color: @text-primary;
+  font-family: monospace;
+}
+
+.advancedBtn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 107, 0, 0.1);
+  border: 1px solid rgba(255, 107, 0, 0.3);
+  border-radius: @radius-lg;
+  padding: 32rpx;
+  margin-bottom: 32rpx;
+
+  &:active {
+    background: rgba(255, 107, 0, 0.2);
+  }
+}
+
+.advancedText {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: @primary-color;
+}
+
+.advancedArrow {
+  font-size: 32rpx;
+  color: @primary-color;
+}
+
+.debugSection {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: @radius-lg;
+  padding: 24rpx;
+  margin-top: 32rpx;
+}
+
+.debugTitle {
+  font-size: 24rpx;
+  color: @text-tertiary;
+  margin-bottom: 16rpx;
+  display: block;
+}
+
+.debugText {
+  font-size: 22rpx;
+  color: @text-tertiary;
+  font-family: monospace;
+  display: block;
+  margin-bottom: 8rpx;
+}
