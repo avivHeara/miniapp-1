@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, router } from '@ray-js/ray';
+import { View, Text, ScrollView, Image } from '@ray-js/ray';
+import { router } from '@ray-js/ray';  // ייבוא נפרד של router
 import clsx from 'clsx';
 import {
   useDevice,
@@ -20,7 +21,7 @@ const { control_data, colour_data } = lampSchemaMap;
 // DP 108 - selected_device (Enum: Device1, Device2, Device3)
 const DEVICE_ENUM_VALUES = ['Device1', 'Device2', 'Device3'] as const;
 
-// Mode tabs - רק מצבי אור (בלי שבת/טיימר)
+// Mode tabs - רק מצבי אור
 type ModeType = 'white' | 'colour' | 'scene';
 
 const MODE_TABS: { key: ModeType; label: string; icon: string }[] = [
@@ -76,38 +77,65 @@ export function Home() {
   }, [selectedDevice]);
 
   // ========================================
-  // Navigation Functions
+  // Navigation Functions - תיקון!
   // ========================================
   const goBack = React.useCallback(() => {
-    router.back();
+    console.log('[Navigation] goBack clicked');
+    try {
+      router.back();
+    } catch (e) {
+      console.log('[Navigation] router.back failed, trying ty.navigateBack');
+      ty.navigateBack();
+    }
   }, []);
 
   const goToSettings = React.useCallback(() => {
-    router.push('/settings');
+    console.log('[Navigation] goToSettings clicked');
+    try {
+      router.push('/settings');
+    } catch (e) {
+      console.log('[Navigation] router.push failed, trying ty.navigateTo');
+      ty.navigateTo({ url: '/pages/Settings/index' });
+    }
   }, []);
 
   const goToDevices = React.useCallback(() => {
-    router.push('/devices');
+    console.log('[Navigation] goToDevices clicked');
+    try {
+      router.push('/devices');
+    } catch (e) {
+      console.log('[Navigation] router.push failed, trying ty.navigateTo');
+      ty.navigateTo({ url: '/pages/Devices/index' });
+    }
   }, []);
 
   const goToShabbat = React.useCallback(() => {
-    router.push('/shabbat');
+    console.log('[Navigation] goToShabbat clicked');
+    try {
+      router.push('/shabbat');
+    } catch (e) {
+      console.log('[Navigation] router.push failed, trying ty.navigateTo');
+      ty.navigateTo({ url: '/pages/Shabbat/index' });
+    }
   }, []);
 
   const goToTimers = React.useCallback(() => {
-    router.push('/timers');
+    console.log('[Navigation] goToTimers clicked');
+    try {
+      router.push('/timers');
+    } catch (e) {
+      console.log('[Navigation] router.push failed, trying ty.navigateTo');
+      ty.navigateTo({ url: '/pages/Timers/index' });
+    }
   }, []);
 
   // ========================================
   // Handlers
   // ========================================
-  const handleModeChange = React.useCallback(
-    (mode: ModeType) => {
-      setActiveMode(mode);
-      dpActions.work_mode?.set(mode, { checkRepeat: false, throttle: 300 });
-    },
-    [dpActions]
-  );
+  const handleModeChange = React.useCallback((mode: ModeType) => {
+    setActiveMode(mode);
+    dpActions.work_mode?.set(mode, { checkRepeat: false, throttle: 300 });
+  }, [dpActions]);
 
   const handleChangeDevice = React.useCallback(
     (key: string) => {
@@ -150,7 +178,7 @@ export function Home() {
   }, []);
 
   // ========================================
-  // Render helpers
+  // Render Functions
   // ========================================
 
   // Header Bar
@@ -222,7 +250,7 @@ export function Home() {
   const renderModeTabs = () => {
     return (
       <View className={styles.modeTabs}>
-        {MODE_TABS.map(mode => (
+        {MODE_TABS.map((mode) => (
           <View
             key={mode.key}
             className={clsx(
@@ -246,33 +274,47 @@ export function Home() {
     );
   };
 
-  // Bottom Navigation
+  // Bottom Navigation with Image
   const renderBottomNav = () => {
     return (
-      <View className={styles.bottomNav}>
-        <View className={clsx(styles.navItem, styles.navItemActive)}>
-          <Text className={styles.navIcon}>💡</Text>
-          <Text className={clsx(styles.navLabel, styles.navLabelActive)}>מנורות</Text>
-        </View>
-        <View className={styles.navItem} onClick={goToTimers}>
-          <Text className={styles.navIcon}>⏱️</Text>
-          <Text className={styles.navLabel}>טיימר</Text>
-        </View>
-        <View className={styles.navItem} onClick={goToShabbat}>
-          <Text className={styles.navIcon}>🕯️</Text>
-          <Text className={styles.navLabel}>שבת</Text>
-        </View>
-        <View className={styles.navItem} onClick={goToSettings}>
-          <Text className={styles.navIcon}>⚙️</Text>
-          <Text className={styles.navLabel}>עוד</Text>
+      <View className={styles.bottomNavContainer}>
+        {/* התמונה עם המגרעת */}
+        <Image
+          className={styles.bottomNavBg}
+          src="/images/bottom_dark.png"
+          mode="widthFix"
+        />
+        
+        {/* הכפתורים */}
+        <View className={styles.bottomNav}>
+          <View 
+            className={clsx(styles.navItem, styles.navItemActive)}
+            onClick={() => console.log('Home clicked')}
+          >
+            <Text className={styles.navIcon}>💡</Text>
+            <Text className={clsx(styles.navLabel, styles.navLabelActive)}>מנורות</Text>
+          </View>
+          <View className={styles.navItem} onClick={goToTimers}>
+            <Text className={styles.navIcon}>⏱️</Text>
+            <Text className={styles.navLabel}>טיימר</Text>
+          </View>
+          
+          {/* מקום ריק לכפתור ההפעלה */}
+          <View className={styles.navSpacer} />
+          
+          <View className={styles.navItem} onClick={goToShabbat}>
+            <Text className={styles.navIcon}>🕯️</Text>
+            <Text className={styles.navLabel}>שבת</Text>
+          </View>
+          <View className={styles.navItem} onClick={goToSettings}>
+            <Text className={styles.navIcon}>⚙️</Text>
+            <Text className={styles.navLabel}>עוד</Text>
+          </View>
         </View>
       </View>
     );
   };
 
-  // ========================================
-  // Render
-  // ========================================
   return (
     <View className={styles.pageContainer}>
       {/* ===== HEADER BAR ===== */}
@@ -293,11 +335,11 @@ export function Home() {
         <View className={styles.contentWrapper}>
           <View className={styles.dimmerContainer}>
             <Dimmer
-              style={{ marginTop: 0 }}                 // 👈 מכווץ את המרווח של ה-Box
               contentClassName={clsx(!power && styles.disabled)}
               setScrollEnabled={setScrollEnabled}
               showTitle={false}
               hideTabs={true}
+              hideCollectColors={true}
               mode={activeMode as any}
               colour={colour}
               brightness={brightness}

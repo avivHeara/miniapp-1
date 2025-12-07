@@ -28,7 +28,7 @@ interface IProps {
   showTitle?: boolean;
   /** הסתר את הטאבים הפנימיים - להשתמש כשיש טאבים חיצוניים */
   hideTabs?: boolean;
-  /** הסתר את צבעי האוסף */
+  /** הסתר את צבעי האוסף (עיגולי הצבעים) */
   hideCollectColors?: boolean;
   mode: WorkMode;
   temperature: number;
@@ -37,19 +37,8 @@ interface IProps {
   canEdit?: boolean;
   validWorkMode?: WorkMode[];
   onModeChange?: (v: string) => void;
-  /**
-   * בחר את צבע האור הצבעוני שנאסף, או בחר טמפרטורת צבע, 
-   * בהירות, גוון, רוויה או בהירות, ולאחר מכן לחץ חזור.
-   */
   onRelease: (code: string, value: any) => void;
-  /**
-   * אור לבן שנבחר במועדפים - התקשרות חוזרת
-   */
   onReleaseWhite: (cmd: DpState) => void;
-  /**
-   * התאמות לשינויים בגוון, רוויה ובהירות של אור צבעוני, 
-   * או טמפרטורת צבע ובהירות של אור לבן.
-   */
   onChange?: (isColor: boolean, value: any) => void;
   setScrollEnabled?: (v: boolean) => void;
 }
@@ -77,7 +66,7 @@ export const Dimmer = React.memo((props: IProps) => {
 
   const support = useSupport();
 
-  // צור סרגל טאב בהתבסס על מספר הנתיבים הנתמכים
+  // 根据支持的路数生成 tabBar
   const workModeTabs = useCreation(() => {
     const tabs = [];
     if ((support.isSupportTemp() || support.isSupportBright()) && validWorkMode.includes('white')) {
@@ -145,9 +134,9 @@ export const Dimmer = React.memo((props: IProps) => {
           onClick={v => onModeChange?.(v)}
         />
       )}
-
+      
       {/* הצג צבעי אוסף רק אם hideCollectColors=false */}
-      {/* {!hideCollectColors && ['white', 'colour'].indexOf(mode) !== -1 && (
+      {!hideCollectColors && ['white', 'colour'].indexOf(mode) !== -1 && (
         <CollectColors
           style={{ justifyContent: 'start', width: '100%', margin: '32rpx 0' }}
           showAdd={canEdit}
@@ -157,8 +146,8 @@ export const Dimmer = React.memo((props: IProps) => {
           temperature={temperature}
           chooseColor={data => handleChooseColor?.(data)}
         />
-      )} */}
-
+      )}
+      
       {DimmerContent}
     </Box>
   );

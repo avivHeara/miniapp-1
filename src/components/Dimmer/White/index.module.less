@@ -1,50 +1,240 @@
+// ========================================
+// White Mode - Beautiful Sliders
+// ========================================
+
 .container {
-  width: 100%;
-  padding: 8rpx 24rpx 24rpx;
-  /* רווח עדין מסביב לדימר בתוך ה-Box */
-  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 20rpx;
-  /* רווח בין הקלפים */
+  gap: 48rpx;  // יותר רווח בין הסליידרים
+  padding: 32rpx 0;
 }
 
-/* קלף אחד (בהירות / טמפרטורה) */
-.card {
-  width: 100%;
-  max-width: 680rpx;
-  /* דומה לרוחב שבאמצע המסך */
-  margin: 0 auto;
-  /* מרכז את הקלף */
-  padding: 24rpx 24rpx 28rpx;
-  border-radius: 32rpx;
-  background: rgba(8, 12, 20, 0.96);
-  box-shadow: 0 24rpx 80rpx rgba(0, 0, 0, 0.85);
-  border: 1rpx solid rgba(56, 189, 248, 0.4);
-  /* קצה זוהר עדין */
-  box-sizing: border-box;
+// ========================================
+// SLIDER CARD - כרטיס עם רקע
+// ========================================
+.sliderCard {
+  background: rgba(40, 40, 50, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 40rpx;
+  padding: 36rpx;  // יותר padding
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* שורת הטקסט למעלה (כותרת + ערך) */
-.textBox {
+// ========================================
+// SLIDER HEADER - כותרת ואחוזים
+// ========================================
+.sliderHeader {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: 16rpx;
+  align-items: center;
+  margin-bottom: 28rpx;  // יותר רווח
+  padding: 0 12rpx;
 }
 
 .label {
-  font-family: PingFang SC;
-  font-size: 26rpx;
+  font-size: 32rpx;
   font-weight: 500;
-  line-height: 40rpx;
-  color: rgba(248, 250, 252, 0.92);
+  color: #e0e0e0;
 }
 
 .value {
-  font-family: Manrope;
-  font-size: 24rpx;
-  font-weight: 500;
-  line-height: 36rpx;
-  color: rgba(248, 250, 252, 0.82);
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.valueTemp {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+// ========================================
+// SLIDER WRAPPER - עוטף הסליידר
+// ========================================
+.sliderWrapper {
+  position: relative;
+  width: 100%;
+  height: 120rpx;
+  border-radius: 60rpx;
+  overflow: visible;  // חשוב! כדי שה-thumb יראה
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  
+  --progress: 50%;
+}
+
+// ========================================
+// THUMB INDICATOR - הנקודה הבולטת
+// ========================================
+.thumbIndicator {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: #ffffff;
+  z-index: 20;
+  pointer-events: none;
+  
+  // גבול כהה
+  border: 4rpx solid rgba(0, 0, 0, 0.2);
+  
+  // צל וזוהר חזק
+  box-shadow: 
+    0 4rpx 12rpx rgba(0, 0, 0, 0.4),
+    0 0 0 6rpx rgba(255, 255, 255, 0.3),
+    0 0 40rpx 8rpx rgba(255, 255, 255, 0.6),
+    inset 0 2rpx 4rpx rgba(255, 255, 255, 0.8);
+    
+  // אנימציה חלקה
+  transition: left 0.05s ease-out;
+}
+
+// ========================================
+// BRIGHTNESS TRACK - מסלול בהירות
+// ========================================
+.brightnessTrack {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 60rpx;
+  overflow: hidden;
+  
+  // רקע כהה
+  background: linear-gradient(to right, 
+    rgba(50, 50, 50, 1) 0%,
+    rgba(80, 80, 80, 1) 100%
+  );
+}
+
+.brightnessFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  border-radius: 60rpx;
+  
+  // גרדיאנט מאפור ללבן
+  background: linear-gradient(to right, 
+    rgba(100, 100, 100, 1) 0%,
+    rgba(180, 180, 180, 1) 50%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  
+  // זוהר
+  box-shadow: 
+    0 0 30rpx rgba(255, 255, 255, 0.4),
+    inset 0 0 20rpx rgba(255, 255, 255, 0.2);
+    
+  transition: width 0.05s ease-out;
+}
+
+// ========================================
+// TEMPERATURE TRACK - מסלול טמפרטורה
+// ========================================
+.temperatureTrack {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 60rpx;
+  overflow: hidden;
+  
+  // גרדיאנט קבוע: כתום (חם) -> לבן -> כחול (קר)
+  background: linear-gradient(to right, 
+    #ff8c00 0%,      // כתום חם - 2700K
+    #ffb347 20%,     // כתום בהיר
+    #ffd699 35%,     // צהבהב
+    #ffffff 50%,     // לבן - 4600K
+    #e0f0ff 65%,     // כחול בהיר מאוד
+    #87ceeb 80%,     // כחול בהיר
+    #00bfff 100%     // כחול קר - 6500K
+  );
+  
+  // להחשיך את החלק הלא פעיל
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: var(--progress);
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.55);
+    transition: left 0.05s ease-out;
+  }
+}
+
+.temperatureFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  border-radius: 60rpx;
+  background: transparent;
+  transition: width 0.05s ease-out;
+}
+
+// ========================================
+// SLIDER INPUT - הסליידר עצמו (מוסתר)
+// ========================================
+.sliderInput {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 15;
+  direction: ltr;
+  opacity: 0;  // מוסתר - משתמשים ב-thumbIndicator במקום
+}
+
+// ========================================
+// GLOW EFFECTS - אפקטי זוהר
+// ========================================
+.sliderCard:first-child .sliderWrapper {
+  &::before {
+    content: '';
+    position: absolute;
+    top: -15rpx;
+    left: -15rpx;
+    right: -15rpx;
+    bottom: -15rpx;
+    border-radius: 75rpx;
+    background: linear-gradient(to right, 
+      transparent 0%,
+      rgba(255, 255, 255, 0.12) var(--progress),
+      transparent var(--progress)
+    );
+    filter: blur(25rpx);
+    z-index: -1;
+    pointer-events: none;
+  }
+}
+
+.sliderCard:last-child .sliderWrapper {
+  &::before {
+    content: '';
+    position: absolute;
+    top: -15rpx;
+    left: -15rpx;
+    right: -15rpx;
+    bottom: -15rpx;
+    border-radius: 75rpx;
+    background: linear-gradient(to right, 
+      rgba(255, 140, 0, 0.35) 0%,
+      rgba(255, 220, 150, 0.25) 35%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(150, 200, 255, 0.25) 65%,
+      rgba(0, 191, 255, 0.35) 100%
+    );
+    filter: blur(30rpx);
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.7;
+  }
 }
