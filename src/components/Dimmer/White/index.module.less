@@ -1,33 +1,33 @@
 // ========================================
-// White Mode - Beautiful Sliders
+// White Mode - Fast & Smooth Sliders
 // ========================================
 
 .container {
   display: flex;
   flex-direction: column;
-  gap: 48rpx;  // יותר רווח בין הסליידרים
+  gap: 48rpx;
   padding: 32rpx 0;
 }
 
 // ========================================
-// SLIDER CARD - כרטיס עם רקע
+// SLIDER CARD
 // ========================================
 .sliderCard {
   background: rgba(40, 40, 50, 0.6);
   backdrop-filter: blur(10px);
   border-radius: 40rpx;
-  padding: 36rpx;  // יותר padding
+  padding: 36rpx;
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 // ========================================
-// SLIDER HEADER - כותרת ואחוזים
+// SLIDER HEADER
 // ========================================
 .sliderHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 28rpx;  // יותר רווח
+  margin-bottom: 28rpx;
   padding: 0 12rpx;
 }
 
@@ -50,191 +50,97 @@
 }
 
 // ========================================
-// SLIDER WRAPPER - עוטף הסליידר
+// BRIGHTNESS WRAPPER
 // ========================================
-.sliderWrapper {
+.brightnessWrapper {
   position: relative;
   width: 100%;
   height: 120rpx;
   border-radius: 60rpx;
-  overflow: visible;  // חשוב! כדי שה-thumb יראה
-  background: rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  direction: ltr;
+
+  // רקע גרדיאנט בהירות
+  background: linear-gradient(to right,
+      rgba(60, 60, 60, 1) 0%,
+      rgba(120, 120, 120, 1) 30%,
+      rgba(200, 200, 200, 1) 70%,
+      rgba(255, 255, 255, 1) 100%);
+
+  // גבול עדין
   border: 1px solid rgba(255, 255, 255, 0.1);
-  
-  --progress: 50%;
+
+  // צל פנימי לעומק
+  box-shadow: inset 0 0 20rpx rgba(0, 0, 0, 0.4);
 }
 
 // ========================================
-// THUMB INDICATOR - הנקודה הבולטת
+// TEMPERATURE WRAPPER
 // ========================================
-.thumbIndicator {
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 72rpx;
-  height: 72rpx;
-  border-radius: 50%;
-  background: #ffffff;
-  z-index: 20;
-  pointer-events: none;
-  
-  // גבול כהה
-  border: 4rpx solid rgba(0, 0, 0, 0.2);
-  
-  // צל וזוהר חזק
-  box-shadow: 
-    0 4rpx 12rpx rgba(0, 0, 0, 0.4),
-    0 0 0 6rpx rgba(255, 255, 255, 0.3),
-    0 0 40rpx 8rpx rgba(255, 255, 255, 0.6),
-    inset 0 2rpx 4rpx rgba(255, 255, 255, 0.8);
-    
-  // אנימציה חלקה
-  transition: left 0.05s ease-out;
-}
-
-// ========================================
-// BRIGHTNESS TRACK - מסלול בהירות
-// ========================================
-.brightnessTrack {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+.temperatureWrapper {
+  position: relative;
+  width: 100%;
+  height: 120rpx;
   border-radius: 60rpx;
   overflow: hidden;
-  
-  // רקע כהה
-  background: linear-gradient(to right, 
-    rgba(50, 50, 50, 1) 0%,
-    rgba(80, 80, 80, 1) 100%
-  );
-}
+  direction: ltr;
 
-.brightnessFill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  border-radius: 60rpx;
-  
-  // גרדיאנט מאפור ללבן
-  background: linear-gradient(to right, 
-    rgba(100, 100, 100, 1) 0%,
-    rgba(180, 180, 180, 1) 50%,
-    rgba(255, 255, 255, 1) 100%
-  );
-  
-  // זוהר
-  box-shadow: 
-    0 0 30rpx rgba(255, 255, 255, 0.4),
-    inset 0 0 20rpx rgba(255, 255, 255, 0.2);
-    
-  transition: width 0.05s ease-out;
+  // גרדיאנט טמפרטורה: כתום -> לבן -> כחול
+  background: linear-gradient(to right,
+      #ff8c00 0%,
+      #ffb347 20%,
+      #ffd699 35%,
+      #ffffff 50%,
+      #e0f0ff 65%,
+      #87ceeb 80%,
+      #00bfff 100%);
+
+  // גבול עדין
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  // צל פנימי לעומק
+  box-shadow: inset 0 0 20rpx rgba(0, 0, 0, 0.3);
 }
 
 // ========================================
-// TEMPERATURE TRACK - מסלול טמפרטורה
+// GLOW EFFECTS (בלי transitions)
 // ========================================
-.temperatureTrack {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 60rpx;
-  overflow: hidden;
-  
-  // גרדיאנט קבוע: כתום (חם) -> לבן -> כחול (קר)
-  background: linear-gradient(to right, 
-    #ff8c00 0%,      // כתום חם - 2700K
-    #ffb347 20%,     // כתום בהיר
-    #ffd699 35%,     // צהבהב
-    #ffffff 50%,     // לבן - 4600K
-    #e0f0ff 65%,     // כחול בהיר מאוד
-    #87ceeb 80%,     // כחול בהיר
-    #00bfff 100%     // כחול קר - 6500K
-  );
-  
-  // להחשיך את החלק הלא פעיל
+.sliderCard:first-child {
+
+  // זוהר לבן עדין לבהירות
   &::after {
     content: '';
     position: absolute;
     top: 0;
-    left: var(--progress);
+    left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.55);
-    transition: left 0.05s ease-out;
+    border-radius: 40rpx;
+    pointer-events: none;
+    box-shadow: 0 0 40rpx rgba(255, 255, 255, 0.1);
+    opacity: 0.5;
   }
 }
 
-.temperatureFill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  border-radius: 60rpx;
-  background: transparent;
-  transition: width 0.05s ease-out;
-}
+.sliderCard:last-child {
+  // זוהר צבעוני לטמפרטורה
+  position: relative;
 
-// ========================================
-// SLIDER INPUT - הסליידר עצמו (מוסתר)
-// ========================================
-.sliderInput {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 15;
-  direction: ltr;
-  opacity: 0;  // מוסתר - משתמשים ב-thumbIndicator במקום
-}
-
-// ========================================
-// GLOW EFFECTS - אפקטי זוהר
-// ========================================
-.sliderCard:first-child .sliderWrapper {
-  &::before {
+  &::after {
     content: '';
     position: absolute;
-    top: -15rpx;
-    left: -15rpx;
-    right: -15rpx;
-    bottom: -15rpx;
-    border-radius: 75rpx;
-    background: linear-gradient(to right, 
-      transparent 0%,
-      rgba(255, 255, 255, 0.12) var(--progress),
-      transparent var(--progress)
-    );
-    filter: blur(25rpx);
+    top: -10rpx;
+    left: -10rpx;
+    right: -10rpx;
+    bottom: -10rpx;
+    border-radius: 50rpx;
+    background: linear-gradient(to right,
+        rgba(255, 140, 0, 0.2) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(0, 191, 255, 0.2) 100%);
+    filter: blur(20rpx);
     z-index: -1;
     pointer-events: none;
-  }
-}
-
-.sliderCard:last-child .sliderWrapper {
-  &::before {
-    content: '';
-    position: absolute;
-    top: -15rpx;
-    left: -15rpx;
-    right: -15rpx;
-    bottom: -15rpx;
-    border-radius: 75rpx;
-    background: linear-gradient(to right, 
-      rgba(255, 140, 0, 0.35) 0%,
-      rgba(255, 220, 150, 0.25) 35%,
-      rgba(255, 255, 255, 0.2) 50%,
-      rgba(150, 200, 255, 0.25) 65%,
-      rgba(0, 191, 255, 0.35) 100%
-    );
-    filter: blur(30rpx);
-    z-index: -1;
-    pointer-events: none;
-    opacity: 0.7;
+    opacity: 0.6;
   }
 }

@@ -12,22 +12,22 @@ import { presetFunctionalData } from './openPlayCoolFunctional';
 const { deviceId, groupId } = getCachedLaunchOptions()?.query ?? {};
 
 /**
- * @name: 跳转情景酷玩功能页
+ * @name: Jump to Power Memory functional page
  * @desc:
- * @param {boolean} supportSceneData 是否是全彩
+ * @param {boolean} supportSceneData האם זה בצבע מלא?
  * @return {*}
  */
 export const openPowerMemoryFunctional = async (collectColors: any[], collectWhites: any[]) => {
   const jumpUrl = `functional://LampPowerMemoryFunctional/home?deviceId=${deviceId ||
     ''}&groupId=${groupId || ''}`;
-  // 预设数据
+  // Preset data
   const data = {
     collectColors,
     collectWhites,
   };
-  // 添加功能页预设数据
+  // Add functional page preset data
   await presetFunctionalData(jumpUrl, data);
 
-  // 跳转
+  // Navigate
   navigateTo({ url: jumpUrl, fail: err => console.warn(err) });
 };

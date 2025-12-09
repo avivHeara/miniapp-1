@@ -35,13 +35,14 @@ export const White = (props: IProps) => {
     isTouching.current = true;
   }, []);
 
+  // הורדת throttle ל-16ms (60fps) לתגובה מהירה
   const handleChange = useThrottleFn(
     (key, value) => {
       if (isTouching.current) setScrollEnabled?.(false);
       if (key === 'temp') onChange?.(false, { temperature: value, brightness });
       else onChange?.(false, { temperature, brightness: value });
     },
-    { wait: 80 }
+    { wait: 16 }  // היה 80, עכשיו 16
   ).run;
 
   const handleWhiteRelease = useThrottleFn(
@@ -50,7 +51,7 @@ export const White = (props: IProps) => {
       setScrollEnabled?.(true);
       onRelease?.(code, value);
     },
-    { wait: 80 }
+    { wait: 16 }  // היה 80, עכשיו 16
   ).run;
 
   // חישוב אחוזים
@@ -67,7 +68,7 @@ export const White = (props: IProps) => {
     return '';
   };
 
-  // Track styles מותאמים
+  // Track styles
   const trackStyle = {
     width: '100%',
     height: '120rpx',
@@ -75,11 +76,12 @@ export const White = (props: IProps) => {
   };
 
   const thumbStyle = {
-    width: '88rpx',
-    height: '88rpx',
+    width: '72rpx',
+    height: '72rpx',
     borderRadius: '50%',
     backgroundColor: '#ffffff',
-    boxShadow: '0 0 30px 8px rgba(255, 255, 255, 0.9)',
+    border: '3rpx solid rgba(0,0,0,0.15)',
+    boxShadow: '0 4rpx 12rpx rgba(0,0,0,0.3), 0 0 0 6rpx rgba(255,255,255,0.25), 0 0 30rpx 6rpx rgba(255,255,255,0.5)',
   };
 
   return (
@@ -91,33 +93,20 @@ export const White = (props: IProps) => {
             <Text className={styles.label}>{Strings.getLang('brightness')}</Text>
             <Text className={styles.value}>{brightnessPercent}%</Text>
           </View>
-          <View 
-            className={styles.sliderWrapper}
+          <View
+            className={styles.brightnessWrapper}
             style={{
               '--progress': `${brightnessPercent}%`,
             } as React.CSSProperties}
           >
-            <View className={styles.brightnessTrack}>
-              <View 
-                className={styles.brightnessFill}
-                style={{ width: `${brightnessPercent}%` }}
-              />
-            </View>
-            {/* Thumb indicator */}
-            <View 
-              className={styles.thumbIndicator}
-              style={{ left: `${brightnessPercent}%` }}
+            <LampBrightSlider
+              value={brightness}
+              trackStyle={trackStyle}
+              thumbStyle={thumbStyle}
+              onTouchStart={handleTouchStart}
+              onTouchMove={bright => handleChange('bright', bright)}
+              onTouchEnd={bright => handleWhiteRelease(bright_value.code, bright)}
             />
-            <View className={styles.sliderInput}>
-              <LampBrightSlider
-                value={brightness}
-                trackStyle={trackStyle}
-                thumbStyle={thumbStyle}
-                onTouchStart={handleTouchStart}
-                onTouchMove={bright => handleChange('bright', bright)}
-                onTouchEnd={bright => handleWhiteRelease(bright_value.code, bright)}
-              />
-            </View>
           </View>
         </View>
       )}
@@ -131,33 +120,20 @@ export const White = (props: IProps) => {
               {temperatureKelvin}K {getTempLabel()}
             </Text>
           </View>
-          <View 
-            className={styles.sliderWrapper}
+          <View
+            className={styles.temperatureWrapper}
             style={{
               '--progress': `${temperaturePercent}%`,
             } as React.CSSProperties}
           >
-            <View className={styles.temperatureTrack}>
-              <View 
-                className={styles.temperatureFill}
-                style={{ width: `${temperaturePercent}%` }}
-              />
-            </View>
-            {/* Thumb indicator */}
-            <View 
-              className={styles.thumbIndicator}
-              style={{ left: `${temperaturePercent}%` }}
+            <LampTempSlider
+              value={temperature}
+              trackStyle={trackStyle}
+              thumbStyle={thumbStyle}
+              onTouchStart={handleTouchStart}
+              onTouchMove={temp => handleChange('temp', temp)}
+              onTouchEnd={temp => handleWhiteRelease(temp_value.code, temp)}
             />
-            <View className={styles.sliderInput}>
-              <LampTempSlider
-                value={temperature}
-                trackStyle={trackStyle}
-                thumbStyle={thumbStyle}
-                onTouchStart={handleTouchStart}
-                onTouchMove={temp => handleChange('temp', temp)}
-                onTouchEnd={temp => handleWhiteRelease(temp_value.code, temp)}
-              />
-            </View>
           </View>
         </View>
       )}

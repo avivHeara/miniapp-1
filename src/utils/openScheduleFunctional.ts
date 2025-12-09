@@ -3,7 +3,7 @@ import { navigateTo } from '@ray-js/ray';
 
 const { deviceId, groupId } = getCachedLaunchOptions()?.query ?? {};
 
-// 存储功能页数据Promise化
+// Store functional page data as Promise
 export const presetFunctionalData = (url: string, data: Record<string, any>): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     // @ts-ignore

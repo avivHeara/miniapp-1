@@ -1,74 +1,72 @@
-/* eslint-disable react/require-default-props */
-import clsx from 'clsx';
 import React from 'react';
-import { View, Text, Image } from '@ray-js/ray';
+import clsx from 'clsx';
+import { View } from '@ray-js/ray';
 import styles from './index.module.less';
 
-interface IProps {
-  id?: string;
-  img?: string;
-  style?: any;
-  text?: string;
-  disabled?: boolean;
-  className?: any;
-  imgClassName?: any;
-  textClassName?: any;
-  onClickStart?: () => void;
-  onClickEnd?: () => void;
-  onClick?: () => void;
-  children?: any;
+interface ButtonProps {
+    id?: string;
+    img?: string;
+    style?: React.CSSProperties;
+    className?: string;
+    imgClassName?: string;
+    disabled?: boolean;
+    onClick?: () => void;
+    onTouchStart?: () => void;
+    onTouchEnd?: () => void;
+    children?: React.ReactNode;
 }
-export const Button = (props: IProps) => {
-  const {
-    img,
+
+export const Button: React.FC<ButtonProps> = ({
     id,
-    text,
-    disabled = false,
-    className,
+    img,
     style,
-    children,
+    className,
     imgClassName,
-    textClassName,
+    disabled = false,
     onClick,
-    onClickStart,
-    onClickEnd,
-  } = props;
-  const [click, setClick] = React.useState(false);
+    onTouchStart,
+    onTouchEnd,
+    children,
+}) => {
+    const [isPressed, setIsPressed] = React.useState(false);
 
-  const handleTouchStart = React.useCallback(() => {
-    setClick(true);
-    onClickStart?.();
-  }, [onClickStart]);
+    const handleTouchStart = React.useCallback(() => {
+        setIsPressed(true);
+        onTouchStart?.();
+    }, [onTouchStart]);
 
-  const handleTouchEnd = React.useCallback(() => {
-    setClick(false);
-    onClickEnd?.();
-  }, [onClickEnd]);
+    const handleTouchEnd = React.useCallback(() => {
+        setIsPressed(false);
+        onTouchEnd?.();
+    }, [onTouchEnd]);
 
-  const handleClick = React.useCallback(
-    e => {
-      if (disabled) return;
-      e?.origin?.stopPropagation();
-      onClick?.();
-    },
-    [disabled, onClick]
-  );
+    const handleClick = React.useCallback(
+        (e: any) => {
+            if (disabled) return;
+            e?.origin?.stopPropagation();
+            onClick?.();
+        },
+        [disabled, onClick]
+    );
 
-  return (
-    <View
-      id={id}
-      className={clsx(className, {
-        [styles.touching]: click,
-        [styles.disabled]: disabled,
-      })}
-      style={style}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-      onClick={handleClick}
-    >
-      {img && <Image src={img} className={imgClassName} />}
-      {text && <Text className={textClassName}>{text}</Text>}
-      {children}
-    </View>
-  );
+    return (
+        <View
+            id={id}
+            className={clsx(
+                className,
+                styles.button,
+                {
+                    [styles.touching]: isPressed,
+                    [styles.disabled]: disabled,
+                }
+            )}
+            style={style}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            onClick={handleClick}
+        >
+            {img && <img src={img} className={imgClassName} alt="" />}
+            {children}
+        </View>
+    );
 };

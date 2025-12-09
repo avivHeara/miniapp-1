@@ -1,5 +1,5 @@
 export const isIphoneX = info => {
-  // 判断当前机型是否有顶部栏
+  // Check if current device has status bar
   if (info.platform === 'ios' && info?.screenHeight >= 812) {
     return true;
   }

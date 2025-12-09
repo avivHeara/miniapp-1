@@ -1,8 +1,15 @@
-.disabled {
-  opacity: 0.3;
-  pointer-events: none;
-}
+.button {
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
 
-.touching {
-  opacity: 0.7;
+    &.touching {
+        opacity: 0.7;
+        transform: scale(0.98);
+    }
+
+    &.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
 }

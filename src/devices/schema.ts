@@ -13,7 +13,7 @@ export const lampSchema = [
     iconname: 'icon-dp_power',
     id: 20,
     mode: 'rw',
-    name: '开关',
+    name: 'Switch',
     property: {
       type: 'bool',
     },
@@ -30,7 +30,7 @@ export const lampSchema = [
     iconname: 'icon-dp_mode',
     id: 21,
     mode: 'rw',
-    name: '模式',
+    name: 'Mode',
     property: {
       range: ['white', 'colour', 'scene', 'music'],
       type: 'enum',
@@ -48,7 +48,7 @@ export const lampSchema = [
     iconname: 'icon-liangdu1',
     id: 22,
     mode: 'rw',
-    name: '亮度值',
+    name: 'Brightness Value',
     property: {
       min: 10,
       max: 1000,
@@ -69,7 +69,7 @@ export const lampSchema = [
     iconname: 'icon-dp_half',
     id: 23,
     mode: 'rw',
-    name: '冷暖值',
+    name: 'Temperature Value',
     property: {
       min: 0,
       max: 1000,
@@ -90,7 +90,7 @@ export const lampSchema = [
     iconname: 'icon-dp_mode',
     id: 24,
     mode: 'rw',
-    name: '彩光',
+    name: 'Color Light',
     property: {
       type: 'string',
       maxlen: 255,
@@ -108,7 +108,7 @@ export const lampSchema = [
     iconname: 'icon-dp_mode',
     id: 25,
     mode: 'rw',
-    name: '场景',
+    name: 'Scene',
     property: {
       type: 'string',
       maxlen: 255,
@@ -126,7 +126,7 @@ export const lampSchema = [
     iconname: 'icon-a_nav_timer',
     id: 26,
     mode: 'rw',
-    name: '倒计时剩余时间',
+    name: 'Countdown Remaining Time',
     property: {
       unit: 's',
       min: 0,
@@ -148,7 +148,7 @@ export const lampSchema = [
     iconname: 'icon-dp_mic',
     id: 27,
     mode: 'wr',
-    name: '音乐灯',
+    name: 'Music Light',
     property: {
       type: 'string',
       maxlen: 255,
@@ -166,7 +166,7 @@ export const lampSchema = [
     iconname: 'icon-dp_box2',
     id: 28,
     mode: 'wr',
-    name: '调节',
+    name: 'Control',
     property: {
       type: 'string',
       maxlen: 255,
@@ -184,7 +184,7 @@ export const lampSchema = [
     iconname: 'icon-dp_tool',
     id: 29,
     mode: 'rw',
-    name: '调试',
+    name: 'Debug',
     property: {
       type: 'string',
       maxlen: 255,
@@ -202,7 +202,7 @@ export const lampSchema = [
     iconname: 'icon-dp_time3',
     id: 30,
     mode: 'rw',
-    name: '生物节律',
+    name: 'Circadian Rhythm',
     property: {
       type: 'raw',
       maxlen: 255,
@@ -220,7 +220,7 @@ export const lampSchema = [
     iconname: 'icon-dp_sleep',
     id: 31,
     mode: 'rw',
-    name: '入睡',
+    name: 'Sleep Mode',
     property: {
       type: 'raw',
       maxlen: 255,
@@ -238,7 +238,7 @@ export const lampSchema = [
     iconname: 'icon-dp_sun',
     id: 32,
     mode: 'rw',
-    name: '唤醒',
+    name: 'Wake Up',
     property: {
       type: 'raw',
       maxlen: 255,
@@ -256,7 +256,7 @@ export const lampSchema = [
     iconname: 'icon-dp_lightning',
     id: 33,
     mode: 'rw',
-    name: '断电记忆',
+    name: 'Power Memory',
     property: {
       type: 'raw',
       maxlen: 255,
@@ -274,7 +274,7 @@ export const lampSchema = [
     iconname: 'icon-dp_sleep',
     id: 34,
     mode: 'rw',
-    name: '停电勿扰',
+    name: 'Do Not Disturb',
     property: {
       type: 'bool',
     },
@@ -291,7 +291,7 @@ export const lampSchema = [
     iconname: 'icon-dp_mode',
     id: 35,
     mode: 'rw',
-    name: '开关渐变',
+    name: 'Switch Gradient',
     property: {
       type: 'raw',
       maxlen: 128,
@@ -309,7 +309,7 @@ export const lampSchema = [
     iconname: 'icon-dp_light',
     id: 48,
     mode: 'rw',
-    name: '白光渐变时间',
+    name: 'White Light Gradient Time',
     property: {
       unit: 'ms',
       min: 0,
@@ -331,7 +331,7 @@ export const lampSchema = [
     iconname: 'icon-dp_shield',
     id: 49,
     mode: 'rw',
-    name: '彩光渐变时间',
+    name: 'Color Light Gradient Time',
     property: {
       unit: 'ms',
       min: 0,
@@ -353,7 +353,7 @@ export const lampSchema = [
     iconname: 'icon-dp_power2',
     id: 41,
     mode: 'rw',
-    name: 'Wi-Fi遥控器开关',
+    name: 'Wi-Fi Remote Control Switch',
     property: {
       type: 'bool',
     },
@@ -370,7 +370,7 @@ export const lampSchema = [
     iconname: 'icon-huoyan',
     id: 82,
     mode: 'rw',
-    name: '模拟烛光',
+    name: 'Candle Light Simulation',
     property: {
       type: 'raw',
       maxlen: 128,
@@ -388,7 +388,7 @@ export const lampSchema = [
     iconname: 'icon-dp_time',
     id: 209,
     mode: 'rw',
-    name: '循环定时',
+    name: 'Cycle Timing',
     property: {
       type: 'raw',
       maxlen: 255,
@@ -406,7 +406,7 @@ export const lampSchema = [
     iconname: 'icon-dp_time3',
     id: 210,
     mode: 'rw',
-    name: '随机定时',
+    name: 'Random Timing',
     property: {
       type: 'raw',
       maxlen: 255,
@@ -424,7 +424,7 @@ export const lampSchema = [
     iconname: 'icon-dp_time3',
     id: 210,
     mode: 'rw',
-    name: '幻彩情景',
+    name: 'Dream Light Scene',
     property: {
       type: 'raw',
       maxlen: 255,

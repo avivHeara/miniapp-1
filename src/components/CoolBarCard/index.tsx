@@ -1,24 +1,49 @@
+/**
+ * CoolBarCard Component (Legacy)
+ * נשמר לתאימות לאחור
+ */
+
 import React from 'react';
-import { View, Image, Text } from '@ray-js/ray';
-import Strings from '@/i18n';
-import { getRoad, openPlayCoolFunctional } from '@/utils/openPlayCoolFunctional';
-import { lampSchemaMap } from '@/devices/schema';
-import { useDevInfo, useSupport } from '@ray-js/panel-sdk';
-import styles from './index.module.less';
+import { View, Text } from '@ray-js/ray';
 
-const { scene_data, dreamlight_scene_mode } = lampSchemaMap;
+interface CoolBarCardProps {
+  title?: string;
+  icon?: string;
+  active?: boolean;
+  onClick?: () => void;
+  style?: React.CSSProperties;
+  className?: string;
+  children?: React.ReactNode;
+  [key: string]: any;
+}
 
-export const CoolBarCard = () => {
-  const support = useSupport();
-  const supportSceneData = support.isSupportDp(scene_data.code);
-  const supportDreamlightSceneMode = support.isSupportDp(dreamlight_scene_mode.code);
-  const deviceInfo = useDevInfo();
-  const road = getRoad(deviceInfo);
-  if (!supportSceneData && !supportDreamlightSceneMode) return null;
+export const CoolBarCard: React.FC<CoolBarCardProps> = ({ 
+  title,
+  icon,
+  active,
+  onClick,
+  style,
+  className,
+  children,
+  ...props 
+}) => {
   return (
-    <View className={styles.banner} onClick={() => openPlayCoolFunctional(supportSceneData, road)}>
-      <Image src="/images/coolBarBg.png" className={styles.image} />
-      <Text className={styles.text}>{Strings.getLang('coolBarTip')}</Text>
+    <View 
+      style={{
+        padding: '16rpx',
+        borderRadius: '16rpx',
+        background: active ? 'rgba(255,107,0,0.2)' : 'rgba(255,255,255,0.1)',
+        ...style
+      }}
+      className={className}
+      onClick={onClick}
+      {...props}
+    >
+      {icon && <Text>{icon}</Text>}
+      {title && <Text>{title}</Text>}
+      {children}
     </View>
   );
 };
+
+export default CoolBarCard;

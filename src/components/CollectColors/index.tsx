@@ -154,7 +154,7 @@ export const CollectColors = (props: IProps) => {
   };
 
   let isAddEnabled = collectColors.length < MAX_LENGTH && showAdd;
-  if (!isColor && !support.isSupportTemp()) isAddEnabled = false; // 白光仅支持亮度的情况下不支持添加
+  if (!isColor && !support.isSupportTemp()) isAddEnabled = false;
 
   return (
     <View className={styles.row} style={style}>
@@ -178,15 +178,15 @@ export const CollectColors = (props: IProps) => {
             const isActive = index === activeIndex;
             const bg = isColor
               ? hsv2rgbString(
-                  item.hue,
-                  item.saturation / 10,
-                  (200 + 800 * (item.value / 1000)) / 10
-                )
+                item.hue,
+                item.saturation / 10,
+                (200 + 800 * (item.value / 1000)) / 10
+              )
               : brightKelvin2rgb(
-                  200 + 800 * (item.brightness / 1000),
-                  support.isSupportTemp() ? item.temperature : 1000,
-                  { kelvinMin: 4000, kelvinMax: 8000 }
-                );
+                200 + 800 * (item.brightness / 1000),
+                support.isSupportTemp() ? item.temperature : 1000,
+                { kelvinMin: 4000, kelvinMax: 8000 }
+              );
             return (
               <View
                 key={index}

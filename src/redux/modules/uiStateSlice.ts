@@ -4,11 +4,11 @@ import { ReduxState } from '..';
 
 type UiState = {
   /**
-   * 收藏颜色中彩光当前选中的索引
+   * Currently selected index in collected colors (color light)
    */
   colorIndex: number;
   /**
-   * 收藏颜色中白光当前选中的索引
+   * Currently selected index in collected colors (white light)
    */
   whiteIndex: number;
 };

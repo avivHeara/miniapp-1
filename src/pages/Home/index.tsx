@@ -1,330 +1,200 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, Image } from '@ray-js/ray';
-import { router } from '@ray-js/ray';  // ייבוא נפרד של router
+/**
+ * Home Page
+ * דף הבית הראשי
+ */
+
+import React, { useState, useEffect } from 'react';
+import { View, ScrollView, router } from '@ray-js/ray';
 import clsx from 'clsx';
 import {
-  useDevice,
   useActions,
   useProps,
   useStructuredActions,
   useStructuredProps,
   useSupport,
 } from '@ray-js/panel-sdk';
-import { useCreation } from 'ahooks';
 import { lampSchemaMap } from '@/devices/schema';
-import { ControlBar, Dimmer } from '@/components';
 import { devices } from '@/devices';
+
+import {
+  PowerButton,
+  Dimmer,
+  DeviceSelector,
+  BottomNav,
+  ModeTabs,
+  TimerContent,
+  ShabbatContent,
+} from '@/components';
+
+import type { NavTab, LightMode } from '@/components';
+
 import styles from './index.module.less';
+
+// ========== DEBUG LOG ==========
+console.log('🏠 HOME PAGE LOADED - VERSION 2.0');
 
 const { control_data, colour_data } = lampSchemaMap;
 
-// DP 108 - selected_device (Enum: Device1, Device2, Device3)
-const DEVICE_ENUM_VALUES = ['Device1', 'Device2', 'Device3'] as const;
-
-// Mode tabs - רק מצבי אור
-type ModeType = 'white' | 'colour' | 'scene';
-
-const MODE_TABS: { key: ModeType; label: string; icon: string }[] = [
-  { key: 'white', label: 'White', icon: '💡' },
-  { key: 'colour', label: 'Color', icon: '🎨' },
-  { key: 'scene', label: 'Scenes', icon: '🎬' },
-];
-
 export function Home() {
+  // DEBUG - log on mount
+  useEffect(() => {
+    console.log('🏠 Home component mounted!');
+  }, []);
+
   const support = useSupport();
-  const deviceName = useDevice(d => d.devInfo.name);
   const [scrollEnabled, setScrollEnabled] = useState(true);
 
   const dpActions = useActions();
   const dpStructuredActions = useStructuredActions();
 
-  // Device state
   const colour = useStructuredProps(props => props.colour_data);
   const brightness = useProps(props => props.bright_value);
   const temperature = useProps(props => props.temp_value);
   const power = useProps(props => props.switch_led);
   const workMode = useProps(props => props.work_mode);
 
-  // בחירת מנורה (DP 108 + 111–113)
-  const selectedDevice = useProps(props => props.selected_device);
-  const devName1 = useProps(props => props.dev_name_1);
-  const devName2 = useProps(props => props.dev_name_2);
-  const devName3 = useProps(props => props.dev_name_3);
+  const [activeNavTab, setActiveNavTab] = useState<NavTab>('lights');
 
-  // Active mode tab
-  const [activeMode, setActiveMode] = useState<ModeType>(() => {
+  const [activeLightMode, setActiveLightMode] = useState<LightMode>(() => {
     if (['white', 'colour', 'scene'].includes(workMode)) {
-      return workMode as ModeType;
+      return workMode as LightMode;
     }
     return 'white';
   });
 
-  const deviceTabs = useCreation(
-    () => [
-      { key: DEVICE_ENUM_VALUES[0], name: devName1 || 'מנורה 1' },
-      { key: DEVICE_ENUM_VALUES[1], name: devName2 || 'מנורה 2' },
-      { key: DEVICE_ENUM_VALUES[2], name: devName3 || 'מנורה 3' },
-    ],
-    [devName1, devName2, devName3]
-  );
-
-  const selectedDeviceIndex = React.useMemo(() => {
-    if (!selectedDevice) return 0;
-    const idx = DEVICE_ENUM_VALUES.indexOf(
-      selectedDevice as (typeof DEVICE_ENUM_VALUES)[number]
-    );
-    return idx >= 0 ? idx : 0;
-  }, [selectedDevice]);
-
   // ========================================
-  // Navigation Functions - תיקון!
+  // Navigation Functions
   // ========================================
-  const goBack = React.useCallback(() => {
-    console.log('[Navigation] goBack clicked');
-    try {
-      router.back();
-    } catch (e) {
-      console.log('[Navigation] router.back failed, trying ty.navigateBack');
-      ty.navigateBack();
-    }
-  }, []);
 
-  const goToSettings = React.useCallback(() => {
-    console.log('[Navigation] goToSettings clicked');
-    try {
-      router.push('/settings');
-    } catch (e) {
-      console.log('[Navigation] router.push failed, trying ty.navigateTo');
-      ty.navigateTo({ url: '/pages/Settings/index' });
-    }
-  }, []);
-
-  const goToDevices = React.useCallback(() => {
-    console.log('[Navigation] goToDevices clicked');
+  const goToDevices = () => {
+    console.log('🔵 goToDevices clicked!');
     try {
       router.push('/devices');
     } catch (e) {
-      console.log('[Navigation] router.push failed, trying ty.navigateTo');
-      ty.navigateTo({ url: '/pages/Devices/index' });
+      console.log('Navigation failed', e);
     }
-  }, []);
+  };
 
-  const goToShabbat = React.useCallback(() => {
-    console.log('[Navigation] goToShabbat clicked');
+  const goToSettings = () => {
+    console.log('🔵 goToSettings clicked!');
     try {
-      router.push('/shabbat');
+      router.push('/settings');
     } catch (e) {
-      console.log('[Navigation] router.push failed, trying ty.navigateTo');
-      ty.navigateTo({ url: '/pages/Shabbat/index' });
+      console.log('Navigation failed', e);
     }
-  }, []);
+  };
 
-  const goToTimers = React.useCallback(() => {
-    console.log('[Navigation] goToTimers clicked');
+  const goToTimersPage = () => {
+    console.log('🔵 goToTimersPage clicked!');
     try {
       router.push('/timers');
     } catch (e) {
-      console.log('[Navigation] router.push failed, trying ty.navigateTo');
-      ty.navigateTo({ url: '/pages/Timers/index' });
+      console.log('Navigation failed', e);
     }
-  }, []);
+  };
+
+  const goToShabbatPage = () => {
+    console.log('🔵 goToShabbatPage clicked!');
+    try {
+      router.push('/shabbat');
+    } catch (e) {
+      console.log('Navigation failed', e);
+    }
+  };
 
   // ========================================
   // Handlers
   // ========================================
-  const handleModeChange = React.useCallback((mode: ModeType) => {
-    setActiveMode(mode);
+
+  const handleLightModeChange = (mode: LightMode) => {
+    console.log('🟢 handleLightModeChange:', mode);
+    setActiveLightMode(mode);
     dpActions.work_mode?.set(mode, { checkRepeat: false, throttle: 300 });
-  }, [dpActions]);
+  };
 
-  const handleChangeDevice = React.useCallback(
-    (key: string) => {
-      if (dpActions.selected_device) {
-        dpActions.selected_device.set(key, { checkRepeat: false, throttle: 300 });
-      }
-    },
-    [dpActions]
-  );
+  const handleNavTabChange = (tab: NavTab) => {
+    console.log('🟢 handleNavTabChange:', tab);
+    setActiveNavTab(tab);
+  };
 
-  const handleColorChange = React.useCallback(
-    (isColour: boolean, data: any) => {
-      if (!support.isSupportDp(control_data.code)) return;
-      let controlData = { hue: 0, saturation: 0, value: 0, bright: 0, temp: 0 };
-      if (isColour) {
-        const { hue, saturation, value } = data;
-        controlData = { hue, saturation, value, bright: 0, temp: 0 };
-      } else {
-        const { brightness: bright, temperature: temp } = data;
-        controlData = { hue: 0, saturation: 0, value: 0, bright, temp };
-      }
-      dpStructuredActions.control_data.set(controlData, { throttle: 300 });
-    },
-    [dpStructuredActions, support]
-  );
+  const handleColorChange = (isColour: boolean, data: any) => {
+    if (!support.isSupportDp(control_data.code)) return;
+    let controlData = { hue: 0, saturation: 0, value: 0, bright: 0, temp: 0 };
+    if (isColour) {
+      const { hue, saturation, value } = data;
+      controlData = { hue, saturation, value, bright: 0, temp: 0 };
+    } else {
+      const { brightness: bright, temperature: temp } = data;
+      controlData = { hue: 0, saturation: 0, value: 0, bright, temp };
+    }
+    dpStructuredActions.control_data.set(controlData, { throttle: 50 });
+  };
 
-  const handleRelease = React.useCallback(
-    (code: string, value: any) => {
-      if (code === colour_data.code) {
-        dpStructuredActions[code].set(value, { throttle: 300, immediate: true });
-      } else {
-        dpActions[code].set(value, { throttle: 300 });
-      }
-    },
-    [dpActions, dpStructuredActions]
-  );
+  const handleRelease = (code: string, value: any) => {
+    if (code === colour_data.code) {
+      dpStructuredActions[code].set(value, { throttle: 50, immediate: true });
+    } else {
+      dpActions[code].set(value, { throttle: 50 });
+    }
+  };
 
-  const handleReleaseWhite = React.useCallback((value: any) => {
-    devices.lamp.publishDps(value, { throttle: 300 });
-  }, []);
+  const handleReleaseWhite = (value: any) => {
+    devices.lamp.publishDps(value, { throttle: 50 });
+  };
 
   // ========================================
-  // Render Functions
+  // Render Content
   // ========================================
 
-  // Header Bar
-  const renderHeader = () => {
-    return (
-      <View className={styles.headerBar}>
-        {/* כפתור חזרה */}
-        <View className={styles.headerBtn} onClick={goBack}>
-          <Text className={styles.headerBtnText}>←</Text>
-        </View>
-
-        {/* שם המכשיר */}
-        <View className={styles.headerCenter}>
-          <Text className={styles.headerTitle}>{deviceName || 'MBN Dimmer'}</Text>
-          <View className={styles.headerEditBtn} onClick={goToDevices}>
-            <Text className={styles.headerEditText}>✏️</Text>
+  const renderContent = () => {
+    switch (activeNavTab) {
+      case 'lights':
+        return (
+          <View className={styles.dimmerContainer}>
+            <Dimmer
+              contentClassName={clsx(!power && styles.disabled)}
+              setScrollEnabled={setScrollEnabled}
+              showTitle={false}
+              hideTabs={true}
+              hideCollectColors={true}
+              mode={activeLightMode as any}
+              colour={colour}
+              brightness={brightness}
+              temperature={temperature}
+              onModeChange={handleLightModeChange}
+              onChange={handleColorChange}
+              onRelease={handleRelease}
+              onReleaseWhite={handleReleaseWhite}
+            />
           </View>
-        </View>
+        );
 
-        {/* Placeholder לאיזון */}
-        <View className={styles.headerBtn} style={{ opacity: 0 }}>
-          <Text className={styles.headerBtnText}>←</Text>
-        </View>
-      </View>
-    );
-  };
+      case 'timer':
+        return <TimerContent onAdvancedPress={goToTimersPage} />;
 
-  // Device Selector
-  const renderDeviceSelector = () => {
-    const itemWidthPercent = 100 / deviceTabs.length;
-    const offsetPercent = selectedDeviceIndex * itemWidthPercent;
+      case 'shabbat':
+        return <ShabbatContent onAdvancedPress={goToShabbatPage} />;
 
-    return (
-      <View className={styles.deviceSelector}>
-        <View className={styles.deviceTabs}>
-          <View
-            className={styles.deviceThumb}
-            style={{
-              width: `${itemWidthPercent}%`,
-              left: `${offsetPercent}%`,
-            }}
-          />
-          {deviceTabs.map((item, index) => (
-            <View
-              key={item.key}
-              className={styles.deviceTab}
-              onClick={() => handleChangeDevice(item.key)}
-            >
-              <Text
-                className={clsx(
-                  styles.deviceTabText,
-                  index === selectedDeviceIndex && styles.deviceTabTextActive
-                )}
-              >
-                {item.name}
-              </Text>
-            </View>
-          ))}
-        </View>
-        <View className={styles.editBtn} onClick={goToDevices}>
-          <Text className={styles.editBtnIcon}>✏️</Text>
-          <Text className={styles.editBtnText}>Edit</Text>
-        </View>
-      </View>
-    );
-  };
-
-  // Mode Tabs
-  const renderModeTabs = () => {
-    return (
-      <View className={styles.modeTabs}>
-        {MODE_TABS.map((mode) => (
-          <View
-            key={mode.key}
-            className={clsx(
-              styles.modeTab,
-              activeMode === mode.key && styles.modeTabActive
-            )}
-            onClick={() => handleModeChange(mode.key)}
-          >
-            <Text className={styles.modeTabIcon}>{mode.icon}</Text>
-            <Text
-              className={clsx(
-                styles.modeTabText,
-                activeMode === mode.key && styles.modeTabTextActive
-              )}
-            >
-              {mode.label}
-            </Text>
-          </View>
-        ))}
-      </View>
-    );
-  };
-
-  // Bottom Navigation with Image
-  const renderBottomNav = () => {
-    return (
-      <View className={styles.bottomNavContainer}>
-        {/* התמונה עם המגרעת */}
-        <Image
-          className={styles.bottomNavBg}
-          src="/images/bottom_dark.png"
-          mode="widthFix"
-        />
-        
-        {/* הכפתורים */}
-        <View className={styles.bottomNav}>
-          <View 
-            className={clsx(styles.navItem, styles.navItemActive)}
-            onClick={() => console.log('Home clicked')}
-          >
-            <Text className={styles.navIcon}>💡</Text>
-            <Text className={clsx(styles.navLabel, styles.navLabelActive)}>מנורות</Text>
-          </View>
-          <View className={styles.navItem} onClick={goToTimers}>
-            <Text className={styles.navIcon}>⏱️</Text>
-            <Text className={styles.navLabel}>טיימר</Text>
-          </View>
-          
-          {/* מקום ריק לכפתור ההפעלה */}
-          <View className={styles.navSpacer} />
-          
-          <View className={styles.navItem} onClick={goToShabbat}>
-            <Text className={styles.navIcon}>🕯️</Text>
-            <Text className={styles.navLabel}>שבת</Text>
-          </View>
-          <View className={styles.navItem} onClick={goToSettings}>
-            <Text className={styles.navIcon}>⚙️</Text>
-            <Text className={styles.navLabel}>עוד</Text>
-          </View>
-        </View>
-      </View>
-    );
+      default:
+        return null;
+    }
   };
 
   return (
     <View className={styles.pageContainer}>
-      {/* ===== HEADER BAR ===== */}
-      {renderHeader()}
+      {/* ===== SPACER - דוחף את DeviceSelector למטה ===== */}
+      <View style={{ height: '160rpx' }} />
 
       {/* ===== DEVICE SELECTOR ===== */}
-      {renderDeviceSelector()}
+      <DeviceSelector onEditPress={goToDevices} />
 
       {/* ===== MODE TABS ===== */}
-      {renderModeTabs()}
+      {activeNavTab === 'lights' && (
+        <ModeTabs
+          activeMode={activeLightMode}
+          onChange={handleLightModeChange}
+        />
+      )}
 
       {/* ===== CONTENT AREA ===== */}
       <ScrollView
@@ -333,31 +203,19 @@ export function Home() {
         scrollWithAnimation
       >
         <View className={styles.contentWrapper}>
-          <View className={styles.dimmerContainer}>
-            <Dimmer
-              contentClassName={clsx(!power && styles.disabled)}
-              setScrollEnabled={setScrollEnabled}
-              showTitle={false}
-              hideTabs={true}
-              hideCollectColors={true}
-              mode={activeMode as any}
-              colour={colour}
-              brightness={brightness}
-              temperature={temperature}
-              onModeChange={handleModeChange}
-              onChange={handleColorChange}
-              onRelease={handleRelease}
-              onReleaseWhite={handleReleaseWhite}
-            />
-          </View>
+          {renderContent()}
         </View>
       </ScrollView>
 
       {/* ===== POWER BUTTON ===== */}
-      <ControlBar />
+      {activeNavTab !== 'shabbat' && <PowerButton />}
 
-      {/* ===== BOTTOM NAV BAR ===== */}
-      {renderBottomNav()}
+      {/* ===== BOTTOM NAV ===== */}
+      <BottomNav
+        activeTab={activeNavTab}
+        onChange={handleNavTabChange}
+        onMorePress={goToSettings}
+      />
     </View>
   );
 }

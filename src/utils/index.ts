@@ -5,9 +5,9 @@ interface PercentOption {
 }
 
 /**
- * 标准百分比计算公式
- * @param value 值
- * @param option 百分比计算配置
+ * Standard percentage calculation formula
+ * @param value Value
+ * @param option Percentage calculation configuration
  */
 export const formatPercent = (
   value = 0,

@@ -18,11 +18,11 @@ export interface WhiteCustom {
 
 type CloudState = {
   /**
-   * 收藏的彩光颜色列表
+   * Collected color light list
    */
   collectColors: Array<Partial<ColourCustom>>;
   /**
-   * 收藏的白光颜色列表
+   * Collected white light list
    */
   collectWhites: Array<Partial<WhiteCustom>>;
 };
@@ -85,7 +85,7 @@ export const initCloudDataAsync = createAsyncThunk(
     const storageKeys = [CLOUD_DATA_KEYS_MAP.collectColors, CLOUD_DATA_KEYS_MAP.collectWhites];
     return Promise.all(storageKeys.map(k => devices.lamp.model.abilities.storage.get(k)))
       .then(data => {
-        // 在云端没有数据的情况下，使用默认值
+        // When there's no data in the cloud, use default values
         const cloudData = {
           [CLOUD_DATA_KEYS_MAP.collectColors]: [...config.defaultColors],
           [CLOUD_DATA_KEYS_MAP.collectWhites]: [...config.defaultWhite],

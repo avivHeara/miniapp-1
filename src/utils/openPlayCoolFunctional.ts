@@ -16,25 +16,25 @@ export const presetFunctionalData = (url: string, data: Record<string, any>): Pr
 };
 
 /**
- * @name: 跳转情景酷玩功能页
+ * @name: Jump to Scene Play Cool functional page
  * @desc:
- * @param {boolean} supportSceneData 是否是全彩
+ * @param {boolean} supportSceneData Whether it's full color
  * @return {*}
  */
 export const openPlayCoolFunctional = async (supportSceneData: boolean, road: number) => {
-  // 进入幻彩情景功能页
+  // Enter Dream Light Scene functional page
   const url = `functional://rayPlayCoolFunctional/home?deviceId=${deviceId ||
     ''}&groupId=${groupId || ''}&type=C`;
   const data = supportSceneData
     ? {
-        lightNum: `${road}`, // 几路灯 全彩接口需要
-        dpCode: 'scene_data', // 全彩dp
-      }
+      lightNum: `${road}`, // Number of light roads - Full color interface needs
+      dpCode: 'scene_data', // Full color DP
+    }
     : null;
-  // 添加功能页预设数据
+  // Add functional page preset data
   await presetFunctionalData(url, data);
 
-  // 跳转
+  // Navigate
   navigateTo({ url, fail: err => console.warn(err) });
 };
 
@@ -47,12 +47,12 @@ export const buildMap = (arr, key) =>
   );
 
 /**
- * 值不存在
+ * Value does not exist
  */
 export const isNullOrUndefined = val => val === null || typeof val === 'undefined';
 
 /**
- * 值存在
+ * Value exists
  */
 export const isNotNullOrUndefined = val => !isNullOrUndefined(val);
 
@@ -65,9 +65,9 @@ const RoadValMap = {
 };
 
 const STAND_LAMP_DP_CODE = {
-  colour_data: 'colour_data', // 3,4,5路
-  bright_value: 'bright_value', // 1,2,3,4,5路
-  temp_value: 'temp_value', // 2,3,4,5路
+  colour_data: 'colour_data', // 3,4,5 roads
+  bright_value: 'bright_value', // 1,2,3,4,5 roads
+  temp_value: 'temp_value', // 2,3,4,5 roads
 };
 
 const defaultRoad = {
@@ -90,8 +90,8 @@ export const getRoad = devInfo => {
   const dpSchemaObj = Array.isArray(schema) ? buildMap(schema, 'code') : schema;
 
   const params = defaultRoad;
-  // 判断照明灯是几路
-  // 5路
+  // Determine how many roads the light has
+  // 5 roads
   if (params[RoadValMap.road5]) {
     const road5List = params[RoadValMap.road5];
     const _road = road5List.every(item => {
@@ -102,7 +102,7 @@ export const getRoad = devInfo => {
     }
   }
 
-  // 4路
+  // 4 roads
   if (params[RoadValMap.road4]) {
     const road4List = params[RoadValMap.road4];
     const _road = road4List.every(item => {
@@ -113,7 +113,7 @@ export const getRoad = devInfo => {
     }
   }
 
-  // 3路
+  // 3 roads
   if (params[RoadValMap.road3]) {
     const road3List = params[RoadValMap.road3];
     const _road = road3List.every(item => {
@@ -124,7 +124,7 @@ export const getRoad = devInfo => {
     }
   }
 
-  // 2路
+  // 2 roads
   if (params[RoadValMap.road2]) {
     const road2List = params[RoadValMap.road2];
     const _road = road2List.every(item => {
@@ -135,7 +135,7 @@ export const getRoad = devInfo => {
     }
   }
 
-  // 1路
+  // 1 road
   if (params[RoadValMap.road1]) {
     const road1List = params[RoadValMap.road1];
     const _road = road1List.every(item => {
