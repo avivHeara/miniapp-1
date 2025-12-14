@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { View, Text } from '@ray-js/ray';
+import { View, Text, Image } from '@ray-js/ray';
 import clsx from 'clsx';
 import { useProps, useActions } from '@ray-js/panel-sdk';
 import styles from './index.module.less';
@@ -69,7 +69,6 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({ onEditPress }) =
         hoverClass={styles.editBtnHover}
       >
         <Text className={styles.editIcon}>✏️</Text>
-        <Text className={styles.editText}>Edit</Text>
       </View>
 
       {/* טאבים - סדר RTL */}
@@ -106,7 +105,7 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({ onEditPress }) =
           );
         })}
       </View>
-    </View>
+    </View >
   );
 };
 

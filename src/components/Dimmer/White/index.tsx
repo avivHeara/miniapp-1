@@ -61,27 +61,29 @@ export const White = (props: IProps) => {
   // חישוב טמפרטורה בקלווין (2700K - 6500K)
   const temperatureKelvin = Math.round(2700 + (temperaturePercent / 100) * (6500 - 2700));
 
-  // חישוב תווית טמפרטורה (Warm/Cool)
+  // חישוב תווית טמפרטורה (Warm/Cool/Neutral)
   const getTempLabel = () => {
-    if (temperatureKelvin < 3500) return 'Warm';
-    if (temperatureKelvin > 5000) return 'Cool';
-    return '';
+    if (temperatureKelvin > 6500) return 'Cool';
+    if (temperatureKelvin > 3500) return 'Neutral';
+    return 'Warm';
   };
 
-  // Track styles
+  // Track styles - matched to wrapper dimensions
   const trackStyle = {
     width: '100%',
-    height: '120rpx',
+    height: '100rpx',
     borderRadius: '60rpx',
+    background: 'transparent', // Transparent to show custom wrapper background
   };
 
+  // Metallic 3D thumb with radial gradient
   const thumbStyle = {
-    width: '72rpx',
-    height: '72rpx',
+    width: '68rpx',
+    height: '68rpx',
     borderRadius: '50%',
-    backgroundColor: '#ffffff',
-    border: '3rpx solid rgba(0,0,0,0.15)',
-    boxShadow: '0 4rpx 12rpx rgba(0,0,0,0.3), 0 0 0 6rpx rgba(255,255,255,0.25), 0 0 30rpx 6rpx rgba(255,255,255,0.5)',
+    border: 'none',
+    background: 'radial-gradient(circle at 30% 30%, #ffffff 0%, #d0d0d0 60%, #a0a0a0 100%)',
+    boxShadow: '0 0 30rpx 4rpx rgba(255, 255, 255, 0.8), 0 8rpx 16rpx rgba(0,0,0,0.6), inset -4rpx -4rpx 10rpx rgba(0,0,0,0.3)',
   };
 
   return (
@@ -99,14 +101,17 @@ export const White = (props: IProps) => {
               '--progress': `${brightnessPercent}%`,
             } as React.CSSProperties}
           >
-            <LampBrightSlider
-              value={brightness}
-              trackStyle={trackStyle}
-              thumbStyle={thumbStyle}
-              onTouchStart={handleTouchStart}
-              onTouchMove={bright => handleChange('bright', bright)}
-              onTouchEnd={bright => handleWhiteRelease(bright_value.code, bright)}
-            />
+            <View className={styles.sliderContent}>
+              <LampBrightSlider
+                value={brightness}
+                trackStyle={trackStyle}
+                thumbStyle={thumbStyle}
+                activeThumbStyle={thumbStyle}
+                onTouchStart={handleTouchStart}
+                onTouchMove={bright => handleChange('bright', bright)}
+                onTouchEnd={bright => handleWhiteRelease(bright_value.code, bright)}
+              />
+            </View>
           </View>
         </View>
       )}
@@ -126,14 +131,17 @@ export const White = (props: IProps) => {
               '--progress': `${temperaturePercent}%`,
             } as React.CSSProperties}
           >
-            <LampTempSlider
-              value={temperature}
-              trackStyle={trackStyle}
-              thumbStyle={thumbStyle}
-              onTouchStart={handleTouchStart}
-              onTouchMove={temp => handleChange('temp', temp)}
-              onTouchEnd={temp => handleWhiteRelease(temp_value.code, temp)}
-            />
+            <View className={styles.sliderContent}>
+              <LampTempSlider
+                value={temperature}
+                trackStyle={trackStyle}
+                thumbStyle={thumbStyle}
+                activeThumbStyle={thumbStyle}
+                onTouchStart={handleTouchStart}
+                onTouchMove={temp => handleChange('temp', temp)}
+                onTouchEnd={temp => handleWhiteRelease(temp_value.code, temp)}
+              />
+            </View>
           </View>
         </View>
       )}
