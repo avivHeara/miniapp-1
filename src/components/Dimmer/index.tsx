@@ -106,7 +106,7 @@ export const Dimmer = React.memo((props: IProps) => {
     };
     return (
       <>
-        <Colour {...commonProps} style={genStyle('colour')} colour={props.colour} />
+        <Colour {...commonProps} style={genStyle('colour')} colour={props.colour} currentLampName={props.deviceName} />
         <White
           {...commonProps}
           style={genStyle('white')}

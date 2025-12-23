@@ -23,68 +23,147 @@ interface IProps {
   currentLampName?: string;
 }
 
-// Mock Data Initial State
-const otherLampsInitial = [
-  { id: '1', name: 'מנורה 1', hue: 0, saturation: 1000, value: 1000 },
-  { id: '3', name: 'מנורה 3', hue: 120, saturation: 800, value: 900 },
-];
+// Unified Lamp Interface
+interface LampData {
+  id: string;
+  name: string;
+  hue: number;
+  saturation: number;
+}
 
 const WHEEL_RADIUS = 165;
 
+// Initial Mock Data for Simulation
+const allKnownLamps: LampData[] = [
+  { id: 'lamp_1', name: 'מנורה 1', hue: 0, saturation: 1000 },
+  { id: 'lamp_2', name: 'מנורה 2', hue: 240, saturation: 1000 },
+  { id: 'lamp_3', name: 'מנורה 3', hue: 120, saturation: 800 },
+];
+
 export const Colour = (props: IProps) => {
-  const { style, onRelease, onChange, setScrollEnabled, currentLampName = 'מנורה 2' } = props;
+  const { style, onRelease, onChange, setScrollEnabled, currentLampName = 'מנורה 2', colour } = props;
 
   const support = useSupport();
-  const colourDp = useStructuredProps(dpState => dpState.colour_data);
-  const colour = isUndefined(props.colour) ? colourDp : props.colour;
-  const isTouching = React.useRef(false);
-  const [isDragging, setIsDragging] = React.useState(false);
 
-  // State for other lamps
-  const [otherLamps, setOtherLamps] = React.useState(otherLampsInitial);
-  // Refs for dragging logic
+  // -- STATE --
+  const [lamps, setLamps] = React.useState<LampData[]>(allKnownLamps);
+  const [activeLampId, setActiveLampId] = React.useState<string>('lamp_2');
+  const [draggingId, setDraggingId] = React.useState<string | null>(null);
+
+  // -- REFS --
   const dragStartRef = React.useRef<{ id: string; startX: number; startY: number; initialPos: { x: number; y: number } } | null>(null);
 
-  // Helper to convert HSV to x,y relative to center
+  // -- SYNC --
+  // 1. Handle Selection Change (Tab switch)
+  React.useEffect(() => {
+    const activeRaw = allKnownLamps.find(l => l.name === currentLampName) || allKnownLamps[1];
+    setActiveLampId(activeRaw.id);
+    // Note: We don't update lamps state here to avoid "jumping" to the current hardware color
+    // Which might belong to the previous lamp.
+  }, [currentLampName]);
+
+  // 2. Handle Hardware Color Sync
+  const lastHardwareColourRef = React.useRef(colour);
+  React.useEffect(() => {
+    if (!colour) return;
+
+    // Only sync from physical device if the value actually changed (External/Hardware source)
+    // and if we aren't currently dragging it locally.
+    const isSignificantChange =
+      Math.abs((colour?.hue || 0) - (lastHardwareColourRef.current?.hue || 0)) > 1 ||
+      Math.abs((colour?.saturation || 0) - (lastHardwareColourRef.current?.saturation || 0)) > 1;
+
+    if (isSignificantChange) {
+      lastHardwareColourRef.current = colour;
+      setLamps(prev =>
+        prev.map(l => {
+          if (l.id === activeLampId && draggingId !== l.id) {
+            return {
+              ...l,
+              hue: colour.hue,
+              saturation: colour.saturation,
+            };
+          }
+          return l;
+        })
+      );
+    }
+  }, [colour, activeLampId, draggingId]);
+
+
+  // -- HELPERS --
   const getPosFromHS = (h: number, s: number) => {
-    // h is 0-360, s is 0-1000
     const angle = (h * Math.PI) / 180;
     const dist = (s / 1000) * WHEEL_RADIUS;
-    // Note: LampCirclePickerColor usually has Red at 0 deg (right or top?).
-    // Typically Canvas standard is 0 = Right, 90 = Bottom.
-    // CSS standard might be different.
-    // We might need to adjust based on visual testing. Assuming standard polar.
     const x = Math.cos(angle) * dist;
     const y = Math.sin(angle) * dist;
     return { x, y };
   };
 
-  // Helper convert x,y to HS
   const getHSFromPos = (x: number, y: number) => {
     const dist = Math.sqrt(x * x + y * y);
     const clampedDist = Math.min(dist, WHEEL_RADIUS);
-    let angle = Math.atan2(y, x); // radians -PI to PI
-    if (angle < 0) angle += 2 * Math.PI; // 0 to 2PI
+    let angle = Math.atan2(y, x);
+    if (angle < 0) angle += 2 * Math.PI;
 
     const h = (angle * 180) / Math.PI;
     const s = (clampedDist / WHEEL_RADIUS) * 1000;
     return { h, s };
   };
 
-  // Helper to get CSS color from HSV (s is 0-1000)
-  // Center (s=0) should be White (L=100%). Edge (s=1000) should be Color (L=50%).
   const getColorString = (h: number, s: number) => {
     const lightness = 100 - (s / 1000 * 50);
     return `hsl(${h}, 100%, ${lightness}%)`;
   };
 
+  // -- HANDLERS --
+
+  // 1. Wheel Handlers (For Active Lamp)
+  const handleWheelDataChange = (v: { h: number; s: number }, isComplete: boolean) => {
+    const targetId = activeLampId;
+
+    if (!isComplete) {
+      setDraggingId(targetId);
+    } else {
+      setDraggingId(null);
+    }
+
+    setLamps(prev => prev.map(l => {
+      if (l.id === targetId) {
+        return { ...l, hue: v.h, saturation: v.s };
+      }
+      return l;
+    }));
+
+    // Report to parent (Real Device update)
+    const newData = { hue: v.h, saturation: v.s, value: 1000 };
+    if (isComplete) {
+      onRelease?.(colour_data.code, newData);
+    } else {
+      onChange?.(true, newData);
+    }
+  };
+
+  const handleWheelMove = (v: { h: number; s: number }) => {
+    handleWheelDataChange(v, false);
+    if (setScrollEnabled) setScrollEnabled(false);
+  };
+  const handleWheelEnd = (v: { h: number; s: number }) => {
+    handleWheelDataChange(v, true);
+    if (setScrollEnabled) setScrollEnabled(true);
+  };
+  const handleWheelTouchStart = () => {
+    setDraggingId(activeLampId);
+    if (setScrollEnabled) setScrollEnabled(false);
+  };
+
+  // 2. Marker Touch Handlers
   const handleMarkerTouchStart = (id: string) => (e: any) => {
-    console.log('👆 Marker Touch Start:', id);
-    // e.touches[0]
     const touch = e.touches[0] || e.changedTouches[0];
-    const lamp = otherLamps.find(l => l.id === id);
+    const lamp = lamps.find(l => l.id === id);
     if (!lamp) return;
 
+    // Set Drag Ref
     const initialPos = getPosFromHS(lamp.hue, lamp.saturation);
     dragStartRef.current = {
       id,
@@ -92,6 +171,8 @@ export const Colour = (props: IProps) => {
       startY: touch.pageY,
       initialPos,
     };
+
+    setDraggingId(id);
     if (setScrollEnabled) setScrollEnabled(false);
   };
 
@@ -108,7 +189,7 @@ export const Colour = (props: IProps) => {
 
     const { h, s } = getHSFromPos(newX, newY);
 
-    setOtherLamps(prev => prev.map(l => {
+    setLamps(prev => prev.map(l => {
       if (l.id === id) {
         return { ...l, hue: h, saturation: s };
       }
@@ -117,153 +198,135 @@ export const Colour = (props: IProps) => {
   };
 
   const handleMarkerTouchEnd = () => {
-    console.log('👆 Marker Touch End');
+    if (dragStartRef.current) {
+      const { id } = dragStartRef.current;
+      // Logic to switch active lamp on tap?
+      // User requested STRICT SELECTION: Only DeviceSelector changes the active lamp.
+      // Dragging a marker should NOT make it active.
+      // if (id !== activeLampId) {
+      //   setActiveLampId(id);
+      // }
+    }
+
+    setDraggingId(null);
     dragStartRef.current = null;
     if (setScrollEnabled) setScrollEnabled(true);
-  };
-
-  const handleColourMove = useThrottleFn(
-    (v: any, type?: keyof COLOUR) => {
-      if (isTouching.current) setScrollEnabled?.(false);
-      let newColorData;
-      if (typeof v === 'object') {
-        newColorData = { ...colour, hue: v.hue, saturation: v.s };
-        setIsDragging(true);
-      } else if (type) {
-        newColorData = { ...colour, [type]: v };
-      }
-
-      if (newColorData) {
-        onChange?.(true, newColorData);
-      }
-    },
-    { wait: 80 }
-  ).run;
-
-  const handleColourEnd = React.useCallback(
-    (v: any, type?: keyof COLOUR) => {
-      setIsDragging(false);
-      setScrollEnabled?.(true);
-      let newColorData;
-      if (typeof v === 'object') {
-        newColorData = { ...colour, hue: v.hue, saturation: v.s };
-      } else if (type) {
-        newColorData = { ...colour, [type]: v };
-      }
-      if (newColorData) {
-        onRelease?.(colour_data.code, newColorData);
-      }
-    },
-    [colour]
-  );
-
-  const handleWheelMove = (v: { h: number; s: number }) => {
-    handleColourMove({ hue: v.h, s: v.s });
-  };
-
-  const handleWheelEnd = (v: { h: number; s: number }) => {
-    handleColourEnd({ hue: v.h, s: v.s });
   };
 
 
   const handleTouchStart = React.useCallback(
     (type: 'hue' | 'saturation' | 'value' | 'wheel') => {
       return () => {
-        isTouching.current = true;
-        if (type === 'wheel') setIsDragging(true);
+        // isTouching.current = true; // Unused?
+        if (type === 'wheel') setDraggingId(activeLampId);
       };
     },
-    [colour]
+    [activeLampId]
   );
 
-  const handleTouchEnd = React.useCallback(
-    (type: 'hue' | 'saturation' | 'value' | 'wheel') => {
-      return (v: any) => {
-        isTouching.current = false;
-        if (type === 'wheel') {
-          setIsDragging(false);
-          handleColourEnd(v);
-        } else {
-          handleColourEnd(v, type as keyof COLOUR);
-        }
-      };
-    },
-    [colour]
-  );
+  // -- RENDER UTILS --
+  const activeLamp = lamps.find(l => l.id === activeLampId);
 
-  // Calculate current lamp position for the custom pin
-  const currentPos = getPosFromHS(colour?.hue || 0, colour?.saturation || 0);
-
-  // if (support.isSupportColour())
   return (
     <View style={style} className={styles.container}>
-      <View className={styles.wheelContainer} style={{ width: WHEEL_RADIUS * 2, height: WHEEL_RADIUS * 2 }}>
-        {/* Render Other Lamps Markers */}
-        {otherLamps.map(lamp => {
+      <View
+        className={styles.wheelContainer}
+        style={{
+          width: WHEEL_RADIUS * 2,
+          height: WHEEL_RADIUS * 2,
+          position: 'relative',
+        }}
+      >
+        {/* LAYER 1: The Wheel (Background) */}
+        {/* @ts-ignore */}
+        <LampCirclePickerColor
+          radius={WHEEL_RADIUS}
+          hsColor={{ h: activeLamp?.hue || 0, s: activeLamp?.saturation || 0 }}
+          onTouchStart={handleWheelTouchStart}
+          onTouchMove={handleWheelMove}
+          onTouchEnd={handleWheelEnd}
+          // @ts-ignore
+          thumbRadius={0}
+          // @ts-ignore 
+          thumbStyle={{ opacity: 0, width: 0, height: 0 }}
+        />
+
+        {/* LAYER 2: Markers (Directly in Container) */}
+
+        {/* 2.1 Inactive Markers */}
+        {lamps.filter(l => l.id !== activeLampId).map(lamp => {
           const pos = getPosFromHS(lamp.hue, lamp.saturation);
           const bg = getColorString(lamp.hue, lamp.saturation);
+          const isBeingDragged = draggingId === lamp.id;
 
           return (
             <View
               key={lamp.id}
-              // Wrapper for larger hit area
               style={{
                 position: 'absolute',
                 left: '50%',
                 top: '50%',
-                width: '60rpx', // Larger hit area
-                height: '60rpx',
-                zIndex: 30, // Higher than pin to be safe if overlapping
+                width: '80rpx', // Reasonable hit area
+                height: '80rpx',
+                zIndex: 9999,
+                // Position relative to center
                 transform: `translate(calc(-50% + ${pos.x}px), calc(-50% + ${pos.y}px))`,
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
-              // @ts-ignore
-              catchTouchStart={handleMarkerTouchStart(lamp.id)}
-              catchTouchMove={handleMarkerTouchMove}
-              catchTouchEnd={handleMarkerTouchEnd}
+              onTouchStart={(e) => {
+                // No logs, just logic
+                handleMarkerTouchStart(lamp.id)(e);
+              }}
+              onTouchMove={(e) => {
+                handleMarkerTouchMove(e);
+              }}
+              onTouchEnd={(e) => {
+                handleMarkerTouchEnd();
+              }}
             >
+              {/* Visual Marker */}
               <View
                 className={styles.marker}
                 style={{
-                  // Marker itself
                   backgroundColor: bg,
-                  position: 'static', // positioning handled by wrapper
                   transform: 'none',
+                  position: 'static',
+                  pointerEvents: 'none',
                 }}
               />
+
+              {/* Popup */}
+              {isBeingDragged && (
+                <View className={styles.popup}>
+                  <Text>{lamp.name}</Text>
+                </View>
+              )}
             </View>
           );
         })}
 
-        {/* Render Current Lamp Pin */}
-        <View
-          className={styles.currentMarker}
-          style={{
-            left: '50%',
-            top: '50%',
-            transform: `translate(calc(-50% + ${currentPos.x}px), calc(-100% + ${currentPos.y}px))`,
-            color: getColorString(colour?.hue || 0, colour?.saturation || 0)
-          }}
-        >
-          {/* Popup */}
-          {isDragging && (
-            <View className={styles.popup}>
-              <Text>{currentLampName}</Text>
-            </View>
-          )}
-        </View>
-
-
-        {/* @ts-ignore */}
-        <LampCirclePickerColor
-          radius={WHEEL_RADIUS}
-          hsColor={{ h: colour?.hue || 0, s: colour?.saturation || 1000 }}
-          onTouchStart={handleTouchStart('wheel')}
-          onTouchMove={handleWheelMove}
-          onTouchEnd={handleWheelEnd}
-        />
+        {/* 2.2 Active Lamp Pin */}
+        {activeLamp && (
+          <View
+            className={styles.currentMarker}
+            style={{
+              left: '50%',
+              top: '50%',
+              transform: `translate(calc(-50% + ${getPosFromHS(activeLamp.hue, activeLamp.saturation).x}px), calc(-100% + ${getPosFromHS(activeLamp.hue, activeLamp.saturation).y}px))`,
+              color: getColorString(activeLamp.hue, activeLamp.saturation),
+              pointerEvents: 'none',
+              zIndex: 101,
+            }}
+          >
+            {draggingId === activeLamp.id && (
+              <View className={styles.popup}>
+                <Text>{activeLamp.name}</Text>
+              </View>
+            )}
+          </View>
+        )}
       </View>
     </View>
   );

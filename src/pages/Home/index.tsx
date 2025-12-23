@@ -61,6 +61,22 @@ export function Home(props: Props) {
   const power = useProps(props => props.switch_led);
   const workMode = useProps(props => props.work_mode);
 
+  // -- Device Selector State --
+  const selectedDeviceKey = useProps(props => props.selected_device);
+  const devName1 = useProps(props => props.dev_name_1);
+  const devName2 = useProps(props => props.dev_name_2);
+  const devName3 = useProps(props => props.dev_name_3);
+
+  const currentDeviceName = React.useMemo(() => {
+    // Default to Name 1 if nothing selected
+    switch (selectedDeviceKey) {
+      case 'Device1': return devName1 || 'מנורה 1';
+      case 'Device2': return devName2 || 'מנורה 2';
+      case 'Device3': return devName3 || 'מנורה 3';
+      default: return devName1 || 'מנורה 1';
+    }
+  }, [selectedDeviceKey, devName1, devName2, devName3]);
+
   const [activeNavTab, setActiveNavTab] = useState<NavTab>('lights');
 
   const [activeLightMode, setActiveLightMode] = useState<LightMode>(() => {
@@ -192,7 +208,7 @@ export function Home(props: Props) {
               onChange={handleColorChange}
               onRelease={handleRelease}
               onReleaseWhite={handleReleaseWhite}
-              deviceName={devInfo?.name}
+              deviceName={currentDeviceName}
             />
           </View>
         );
