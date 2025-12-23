@@ -1,17 +1,107 @@
-.title{
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 20px;
-  color: #fff;
-  margin-bottom: 32rpx;
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding-top: 120rpx;
 }
 
-.colorRow {
-  margin-bottom: 16rpx;
+.wheelContainer {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  margin-bottom: 60rpx;
+  position: relative;
+  /* Added for absolute positioning of markers */
+}
+
+.marker {
+  position: absolute;
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+}
+
+.currentMarker {
+  position: absolute;
+  width: 48rpx;
+  height: 48rpx;
+  /* Map Pin Shape using pseudo-elements or background image, keeping it simple css first */
+  background-color: transparent;
+  transform: translate(-50%, -100%);
+  /* Bottom tip at the point */
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &::after {
+    /* The visual pin body */
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 40rpx;
+    height: 40rpx;
+    background-color: currentColor;
+    /* Use the lamp color */
+    border: 4rpx solid #fff;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.3);
+  }
+
+  &::before {
+    /* The dot inside */
+    content: '';
+    position: absolute;
+    top: 12rpx;
+    width: 12rpx;
+    height: 12rpx;
+    background-color: #fff;
+    border-radius: 50%;
+    z-index: 21;
+  }
+}
+
+.popup {
+  position: absolute;
+  top: -80rpx;
+  /* Above the marker */
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 8rpx 16rpx;
+  border-radius: 8rpx;
+  pointer-events: none;
+  z-index: 30;
+  white-space: nowrap;
+
+  text {
+    color: #fff;
+    font-size: 24rpx;
+  }
+
+  /* Triangle arrow */
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -8rpx;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 8rpx solid transparent;
+    border-right: 8rpx solid transparent;
+    border-top: 8rpx solid rgba(0, 0, 0, 0.6);
+  }
+}
+
+.sliderContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 0 40rpx;
 
   .inputBox {
     border: 1px solid #FFFFFF1A;
@@ -21,9 +111,11 @@
     opacity: .7;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 14rpx 16rpx;
+    justify-content: center;
+    padding: 14rpx 32rpx;
     height: 68rpx;
+    margin-bottom: 20rpx;
+    align-self: center;
 
     .label {
       font-size: 14px;
@@ -31,11 +123,10 @@
       line-height: 20px;
       text-align: left;
       color: #fff;
+      margin-right: 12rpx;
     }
 
     .input {
-      padding: 0;
-      flex: 1;
       font-size: 14px;
       font-weight: 600;
       line-height: 19px;

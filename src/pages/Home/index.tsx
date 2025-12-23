@@ -35,10 +35,18 @@ console.log('🏠 HOME PAGE LOADED - VERSION 2.0');
 
 const { control_data, colour_data } = lampSchemaMap;
 
-export function Home() {
+// Define Props for Home
+interface Props {
+  devInfo: DevInfo;
+  extraInfo?: Record<string, any>;
+}
+
+export function Home(props: Props) {
+  const { devInfo } = props;
+
   // DEBUG - log on mount
   useEffect(() => {
-    console.log('🏠 Home component mounted!');
+    console.log('🏠 Home component mounted!', devInfo?.name);
   }, []);
 
   const support = useSupport();
@@ -61,6 +69,16 @@ export function Home() {
     }
     return 'white';
   });
+
+  // Local state for colour data to "neutralize" DP interaction
+  const [localColour, setLocalColour] = useState(colour);
+
+  // Sync local state when DP updates (optional, keeping it here for initial load correct value)
+  useEffect(() => {
+    if (colour) setLocalColour(colour);
+  }, []); // Only on mount/change, actually if we want to "detach", maybe once is enough. 
+  // If we want to support external updates later, we'd add [colour] dependency.
+  // For now, let's keep it detached after mount so user local changes persist even if DP doesn't update.
 
   // ========================================
   // Navigation Functions
@@ -123,18 +141,27 @@ export function Home() {
     if (isColour) {
       const { hue, saturation, value } = data;
       controlData = { hue, saturation, value, bright: 0, temp: 0 };
+      // Local update for dragging
+      setLocalColour({ ...localColour, hue, saturation, value });
     } else {
       const { brightness: bright, temperature: temp } = data;
       controlData = { hue: 0, saturation: 0, value: 0, bright, temp };
     }
-    dpStructuredActions.control_data.set(controlData, { throttle: 50 });
+    // NEUTRALIZED DP CALL
+    // dpStructuredActions.control_data.set(controlData, { throttle: 50 });
+    console.log('🔴 Neutralized control_data.set:', controlData);
   };
 
   const handleRelease = (code: string, value: any) => {
+    console.log('🔴 handleRelease neutralized:', code, value);
     if (code === colour_data.code) {
-      dpStructuredActions[code].set(value, { throttle: 50, immediate: true });
+      // Local update for release
+      setLocalColour({ ...localColour, ...value });
+
+      // NEUTRALIZED DP CALL
+      // dpStructuredActions[code].set(value, { throttle: 50, immediate: true });
     } else {
-      dpActions[code].set(value, { throttle: 50 });
+      // dpActions[code].set(value, { throttle: 50 });
     }
   };
 
@@ -158,13 +185,14 @@ export function Home() {
               hideTabs={true}
               hideCollectColors={true}
               mode={activeLightMode as any}
-              colour={colour}
+              colour={localColour}
               brightness={brightness}
               temperature={temperature}
               onModeChange={handleLightModeChange}
               onChange={handleColorChange}
               onRelease={handleRelease}
               onReleaseWhite={handleReleaseWhite}
+              deviceName={devInfo?.name}
             />
           </View>
         );

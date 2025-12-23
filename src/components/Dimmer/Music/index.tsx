@@ -13,6 +13,19 @@ import styles from './index.module.less';
 const { defaultAppMusicList } = defaultConfig;
 const { onMusic2RgbChange, offMusic2RgbChange } = kit.music2rgb;
 
+const safeCall = (fn: () => any) => {
+  try {
+    const res = fn();
+    if (res && typeof res.then === 'function' && typeof res.catch === 'function') {
+      res.catch((e: any) => {
+        console.warn('Music sync not supported or failed:', e);
+      });
+    }
+  } catch (e) {
+    console.warn('Music sync not supported or failed:', e);
+  }
+};
+
 const musicKey = ['music', 'romance', 'game'] as const;
 
 interface Props {
@@ -27,30 +40,32 @@ export const Music: React.FC<Props> = ({ style }) => {
 
   const handleMusic2RgbChange = useCallback((id: number) => {
     const mode = find<MusicConfig>(defaultAppMusicList, d => d.id === id)?.mode ?? 0;
-    onMusic2RgbChange(data => {
-      const musicData = {
-        mode,
-        hue: data.hue,
-        saturation: data.saturation,
-        value: data.value,
-        brightness: 0,
-        temperature: 0,
-      };
-      actions.music_data.set(musicData);
+    safeCall(() => {
+      onMusic2RgbChange(data => {
+        const musicData = {
+          mode,
+          hue: data.hue,
+          saturation: data.saturation,
+          value: data.value,
+          brightness: 0,
+          temperature: 0,
+        };
+        actions.music_data.set(musicData);
+      });
     });
   }, []);
 
   useEffect(() => {
     if (!power || work_mode !== 'music' || activeId === -1) {
       setActiveId(-1);
-      offMusic2RgbChange();
+      safeCall(() => offMusic2RgbChange());
       return;
     }
     handleMusic2RgbChange(activeId);
   }, [power, activeId, work_mode]);
 
   useUnmount(() => {
-    offMusic2RgbChange();
+    safeCall(() => offMusic2RgbChange());
   });
 
   const appMusicList = useMemo(
@@ -70,7 +85,7 @@ export const Music: React.FC<Props> = ({ style }) => {
 
   const handlePlay = React.useCallback(
     (item: typeof appMusicList[number]) => () => {
-      // 此处可以根据状态进行 dp 的下发
+      // Here, DP can be distributed based on the state.
       setActiveId(activeId === item.id ? -1 : item.id);
     },
     [activeId]

@@ -41,6 +41,7 @@ interface IProps {
   onReleaseWhite: (cmd: DpState) => void;
   onChange?: (isColor: boolean, value: any) => void;
   setScrollEnabled?: (v: boolean) => void;
+  deviceName?: string;
 }
 
 export const Dimmer = React.memo((props: IProps) => {
@@ -48,6 +49,7 @@ export const Dimmer = React.memo((props: IProps) => {
     showTitle,
     hideTabs = false,
     hideCollectColors = false,
+    deviceName = 'מנורה',
     mode,
     style,
     className,
@@ -112,7 +114,7 @@ export const Dimmer = React.memo((props: IProps) => {
           temperature={props.temperature}
         />
         <Scene style={genStyle('scene')} />
-        <Music style={genStyle('music')} />
+        {support.isSupportDp(music_data.code) && <Music style={genStyle('music')} />}
       </>
     );
   }, [mode, props.brightness, props.temperature, props.colour]);
@@ -134,7 +136,7 @@ export const Dimmer = React.memo((props: IProps) => {
           onClick={v => onModeChange?.(v)}
         />
       )}
-      
+
       {/* הצג צבעי אוסף רק אם hideCollectColors=false */}
       {!hideCollectColors && ['white', 'colour'].indexOf(mode) !== -1 && (
         <CollectColors
@@ -147,7 +149,7 @@ export const Dimmer = React.memo((props: IProps) => {
           chooseColor={data => handleChooseColor?.(data)}
         />
       )}
-      
+
       {DimmerContent}
     </Box>
   );
