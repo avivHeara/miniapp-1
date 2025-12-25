@@ -26,7 +26,7 @@ export const Box: React.FC<Props> = ({
             style={style}
         >
             {title ? <View className={styles.title}>{title}</View> : null}
-            <View className={contentClassName}>{children}</View>
+            <View className={contentClassName || ''}>{children}</View>
         </View>
     );
 };

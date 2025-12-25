@@ -269,7 +269,14 @@ export function Home(props: Props) {
         </View>
       </ScrollView>
 
-      {/* ===== BOTTOM FIXED BUTTONS ===== */}
+      {/* ===== BOTTOM NAV ===== */}
+      <BottomNav
+        activeTab={activeNavTab}
+        onChange={handleNavTabChange}
+        onMorePress={goToSettings}
+      />
+
+      {/* ===== BOTTOM FIXED BUTTONS (Moved last to be on top) ===== */}
       {activeNavTab !== 'shabbat' && (
         <View className={styles.bottomFixedContainer}>
           {/* Advanced Timer Button - Left Side, only for Timer tab */}
@@ -284,13 +291,6 @@ export function Home(props: Props) {
           <PowerButton />
         </View>
       )}
-
-      {/* ===== BOTTOM NAV ===== */}
-      <BottomNav
-        activeTab={activeNavTab}
-        onChange={handleNavTabChange}
-        onMorePress={goToSettings}
-      />
     </View>
   );
 }

@@ -53,10 +53,13 @@
 .stateMini {
     z-index: 1000;
     opacity: 1;
-    transform: translate(250rpx, 360rpx) scale(0.12);
+    transform: translate(250rpx, 360rpx) scale(0.18);
     pointer-events: auto;
     cursor: pointer;
     filter: drop-shadow(0 15rpx 30rpx rgba(0, 0, 0, 0.6));
+    border: 4rpx solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    overflow: hidden;
 
     :global(.slider-header),
     :global(.slider-card-label),
@@ -66,9 +69,62 @@
     :global([class*="label"]),
     :global([class*="value"]),
     :global([class*="popup"]),
-    :global([class*="currentMarker"]) {
+    :global([class*="currentMarker"]),
+    :global([class*="CollectColors"]) {
         display: none !important;
     }
+}
+
+.fixedContentArea {
+    display: block !important;
+    height: auto !important;
+    min-height: 800rpx;
+}
+
+.fixedWrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.subTabs {
+    display: flex;
+    flex-direction: row;
+    gap: 32rpx;
+    margin-bottom: 32rpx;
+    padding: 0 16rpx;
+}
+
+.subTab {
+    padding: 12rpx 32rpx;
+    border-radius: 30rpx;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.subTabActive {
+    background: rgba(255, 140, 66, 0.2) !important;
+    border: 1px solid rgba(255, 140, 66, 0.5) !important;
+}
+
+.subTabActive .subTabText {
+    color: #ff8c42 !important;
+    font-weight: 700 !important;
+}
+
+.subTabText {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 26rpx;
+}
+
+.fixedContent {
+    flex: 1;
+    width: 100%;
+    position: relative;
+    min-height: 600rpx;
 }
 
 .miniBackground {
@@ -95,6 +151,6 @@
 }
 
 .stateMini:active {
-    transform: translate(250rpx, 360rpx) scale(0.1);
+    transform: translate(250rpx, 360rpx) scale(0.16);
     opacity: 0.8;
 }

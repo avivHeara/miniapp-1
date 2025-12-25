@@ -31,15 +31,15 @@ export default class ControlFormatter {
   }
 
   parser(val = '') {
-    // 自定义解析
+    // Custom parsing
     const { length } = val;
     if (!length) {
-      console.log('数据有问题，无法解析');
+      console.log('The data is corrupted and cannot be parsed');
       return this.defaultValue;
     }
     const generator = transform(val);
     generator.next();
-    // 版本
+    // Version
     const mode = parseInt(`${generator.next(1).value}`, 16);
     const hue = parseInt(`${generator.next(4).value}`, 16);
     const saturation = parseInt(`${generator.next(4).value}`, 16);
@@ -48,27 +48,27 @@ export default class ControlFormatter {
     const bright = parseInt(`${generator.next(4).value}`, 16);
     return {
       /**
-       * 模式: 0跳变、1呼吸, 0x0-0x1
+       * Mode: 0 jump, 1 breathing, 0x0-0x1
        */
       mode,
       /**
-       * 色度: 0-360
+       * Hue: 0-360
        */
       hue,
       /**
-       * 饱和: 0-1000
+       * Saturation: 0-1000
        */
       saturation,
       /**
-       * 明度: 0-1000
+       * Brightness: 0-1000
        */
       value,
       /**
-       * 白光亮度: 0-1000
+       * White light brightness: 0-1000
        */
       temp,
       /**
-       * 色温值: 0-1000
+       * Color temperature value: 0-1000
        */
       bright,
     };
@@ -83,7 +83,7 @@ export default class ControlFormatter {
   }
 
   formatter(data) {
-    // 自定义格式转为16进制
+    // Custom format to 16-bit
     const { hue = 360, saturation = 1000, value = 1000, bright = 0, temp = 0 } = data;
     const hStr = this.to16(hue, 4);
     const sStr = this.to16(saturation, 4);

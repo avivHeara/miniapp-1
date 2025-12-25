@@ -27,13 +27,13 @@ const composeLayout = (Comp: React.ComponentType<any>) => {
       devices.lamp.init();
       devices.lamp.onInitialized(device => {
         dpKit.init(device);
-        // store.dispatch(initCloudDataAsync()); // 初始化设备维度缓存的云端数据，并同步到 redux
+        // store.dispatch(initCloudDataAsync()); // Initialize the cloud data cached at the device level and synchronize it to... redux
         this.initCloudData();
       });
     }
 
     /**
-     * 初始化设备维度缓存的云端数据，并同步到 redux
+     * Initialize the cloud data cached at the device level and synchronize it to... redux
      */
     async initCloudData() {
       ty.showLoading({ title: '' });
@@ -41,7 +41,7 @@ const composeLayout = (Comp: React.ComponentType<any>) => {
       return Promise.all(storageKeys.map(k => devices.lamp.model.abilities.storage.get(k)))
         .then(data => {
           console.log('=== initCloudData success', data);
-          // 在云端没有数据的情况下，使用默认值
+          // If there is no data in the cloud, use the default value
           const cloudData = {
             [CLOUD_DATA_KEYS_MAP.collectColors]: [...defaultColors],
             [CLOUD_DATA_KEYS_MAP.collectWhites]: [...defaultWhite],
@@ -54,7 +54,7 @@ const composeLayout = (Comp: React.ComponentType<any>) => {
               cloudData[storageKey] = value?.data?.value;
             }
           });
-          // TODO: move to async action
+          // TODO: move to async action 
           store.dispatch(initCloud(cloudData));
           ty.hideLoading();
         })

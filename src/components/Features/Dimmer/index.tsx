@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from '@ray-js/ray';
+import { View, Text } from '@ray-js/ray';
 import clsx from 'clsx';
 import { DpState, useSupport } from '@ray-js/panel-sdk';
 import { lampSchemaMap } from '@/devices/schema';
@@ -94,9 +94,9 @@ export const Dimmer = React.memo((props: IProps) => {
 
     return (
         <Box
-            style={style}
-            className={clsx(styles.container, className || '')}
-            contentClassName={clsx(styles.boxContent, contentClassName || '')}
+            style={style || {}}
+            className={clsx(styles.container || '', className || '')}
+            contentClassName={clsx(styles.boxContent || '', contentClassName || '')}
             title={showTitle ? Strings.getLang('dimming') : ''}
         >
             {!hideTabs && (
@@ -118,7 +118,7 @@ export const Dimmer = React.memo((props: IProps) => {
                 />
             )}
 
-            <View className={styles.contentArea || ''}>
+            <View className={clsx(styles.contentArea || '', activeMetaMode === FIXED_TAB && (styles.fixedContentArea || ''))}>
                 {activeMetaMode === ADJUSTMENT_TAB ? (
                     <>
                         <View
@@ -154,11 +154,31 @@ export const Dimmer = React.memo((props: IProps) => {
                         </View>
                     </>
                 ) : (
-                    <View style={{ position: 'relative', width: '100%', height: '100%' }}>
-                        {mode === 'scene' && <Scene style={{ position: 'relative', width: '100%' }} />}
-                        {mode === 'music' && support.isSupportDp(lampSchemaMap.music_data.code) && (
-                            <Music style={{ position: 'relative', width: '100%' }} />
-                        )}
+                    <View className={styles.fixedWrapper}>
+                        {/* Sub-tabs for Fixed Mode */}
+                        <View className={styles.subTabs}>
+                            <View
+                                className={clsx(styles.subTab || '', mode === 'scene' && (styles.subTabActive || ''))}
+                                onClick={() => onModeChange?.('scene')}
+                            >
+                                <Text className={styles.subTabText || ''}>סצינות</Text>
+                            </View>
+                            {support.isSupportDp(lampSchemaMap.music_data.code) && (
+                                <View
+                                    className={clsx(styles.subTab || '', mode === 'music' && (styles.subTabActive || ''))}
+                                    onClick={() => onModeChange?.('music')}
+                                >
+                                    <Text className={styles.subTabText || ''}>מוזיקה</Text>
+                                </View>
+                            )}
+                        </View>
+
+                        <View className={styles.fixedContent}>
+                            {mode === 'scene' && <Scene style={{ width: '100%' }} />}
+                            {mode === 'music' && (
+                                <Music style={{ width: '100%' }} />
+                            )}
+                        </View>
                     </View>
                 )}
             </View>
