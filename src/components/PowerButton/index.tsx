@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import { View, Image } from '@ray-js/ray';
+import { View, Image, Text } from '@ray-js/ray';
 import { useActions, useProps } from '@ray-js/panel-sdk';
 import styles from './index.module.less';
 

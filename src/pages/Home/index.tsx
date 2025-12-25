@@ -4,7 +4,13 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, router } from '@ray-js/ray';
+import {
+  View,
+  ScrollView,
+  showToast,
+  Text,
+  router
+} from '@ray-js/ray';
 import clsx from 'clsx';
 import {
   useActions,
@@ -193,43 +199,8 @@ export function Home(props: Props) {
   };
 
   // ========================================
-  // Render Content
+  // Render
   // ========================================
-
-  const renderContent = () => {
-    switch (activeNavTab) {
-      case 'lights':
-        return (
-          <View className={styles.dimmerContainer}>
-            <Dimmer
-              contentClassName={clsx(!power && styles.disabled)}
-              setScrollEnabled={setScrollEnabled}
-              showTitle={false}
-              hideTabs={true}
-              hideCollectColors={true}
-              mode={activeLightMode as any}
-              colour={localColour}
-              brightness={brightness}
-              temperature={temperature}
-              onModeChange={handleLightModeChange}
-              onChange={handleColorChange}
-              onRelease={handleRelease}
-              onReleaseWhite={handleReleaseWhite}
-              deviceName={currentDeviceName}
-            />
-          </View>
-        );
-
-      case 'timer':
-        return <TimerContent onAdvancedPress={goToTimersPage} />;
-
-      case 'shabbat':
-        return <ShabbatContent onAdvancedPress={goToShabbatPage} />;
-
-      default:
-        return null;
-    }
-  };
 
   return (
     <View className={styles.pageContainer}>
@@ -247,19 +218,72 @@ export function Home(props: Props) {
         />
       )}
 
-      {/* ===== CONTENT AREA ===== */}
+      {/* ===== CONTENT AREA - Persistent Mounting ===== */}
       <ScrollView
         className={styles.contentArea}
         scrollY={scrollEnabled}
         scrollWithAnimation
       >
         <View className={styles.contentWrapper}>
-          {renderContent()}
+          {/* PERSISTENT LIGHTS TAB */}
+          <View
+            className={clsx(styles.dimmerContainer, {
+              [styles.hideTab]: activeNavTab !== 'lights'
+            })}
+          >
+            <Dimmer
+              contentClassName={clsx(!power && styles.disabled)}
+              setScrollEnabled={setScrollEnabled}
+              showTitle={false}
+              hideTabs={true}
+              hideCollectColors={true}
+              mode={activeLightMode as any}
+              colour={localColour}
+              brightness={brightness}
+              temperature={temperature}
+              onModeChange={handleLightModeChange}
+              onChange={handleColorChange}
+              onRelease={handleRelease}
+              onReleaseWhite={handleReleaseWhite}
+              deviceName={currentDeviceName}
+            />
+          </View>
+
+          {/* PERSISTENT TIMER TAB */}
+          <View
+            className={clsx({
+              [styles.hideTab]: activeNavTab !== 'timer'
+            })}
+          >
+            <TimerContent onAdvancedPress={goToTimersPage} />
+          </View>
+
+          {/* PERSISTENT SHABBAT TAB */}
+          <View
+            className={clsx({
+              [styles.hideTab]: activeNavTab !== 'shabbat'
+            })}
+          >
+            <ShabbatContent onAdvancedPress={goToShabbatPage} />
+          </View>
         </View>
       </ScrollView>
 
-      {/* ===== POWER BUTTON ===== */}
-      {activeNavTab !== 'shabbat' && <PowerButton />}
+      {/* ===== BOTTOM FIXED BUTTONS ===== */}
+      {activeNavTab !== 'shabbat' && (
+        <View className={styles.bottomFixedContainer}>
+          {/* Advanced Timer Button - Left Side, only for Timer tab */}
+          {activeNavTab === 'timer' && (
+            <View className={styles.extraBtnWrapper} onClick={goToTimersPage}>
+              <View className={styles.timerBtn}>
+                <Text className={styles.timerIcon}>⚙️</Text>
+              </View>
+              <Text className={styles.timerLabel}>הגדרות מתקדמות לטיימר</Text>
+            </View>
+          )}
+          <PowerButton />
+        </View>
+      )}
 
       {/* ===== BOTTOM NAV ===== */}
       <BottomNav
