@@ -1,6 +1,7 @@
 import { isUndefined } from 'lodash-es';
 import React, { useMemo } from 'react';
 import { View, Text } from '@ray-js/ray';
+import clsx from 'clsx';
 import { useStructuredProps, useSupport } from '@ray-js/panel-sdk';
 import { useThrottleFn } from 'ahooks';
 import { LampCirclePickerColor } from '@ray-js/components-ty-lamp';
@@ -13,8 +14,9 @@ const { colour_data } = lampSchemaMap;
 
 interface IProps {
   style?: React.CSSProperties;
+  className?: string;
   /**
-   * 彩光值，不传则默认使用 DP colour_data
+   * Color value; if not provided, the default value is DP colour_data.
    */
   colour?: COLOUR;
   onRelease: (code: string, value: COLOUR) => void;
@@ -41,7 +43,7 @@ const allKnownLamps: LampData[] = [
 ];
 
 export const Colour = (props: IProps) => {
-  const { style, onRelease, onChange, setScrollEnabled, currentLampName = 'מנורה 2', colour } = props;
+  const { style, className, onRelease, onChange, setScrollEnabled, currentLampName = 'מנורה 2', colour } = props;
 
   const support = useSupport();
 
@@ -228,7 +230,7 @@ export const Colour = (props: IProps) => {
   const activeLamp = lamps.find(l => l.id === activeLampId);
 
   return (
-    <View style={style} className={styles.container}>
+    <View style={style} className={clsx(styles.container, className || '')}>
       <View
         className={styles.wheelContainer}
         style={{
@@ -241,6 +243,7 @@ export const Colour = (props: IProps) => {
         {/* @ts-ignore */}
         <LampCirclePickerColor
           radius={WHEEL_RADIUS}
+          // @ts-ignore
           hsColor={{ h: activeLamp?.hue || 0, s: activeLamp?.saturation || 0 }}
           onTouchStart={handleWheelTouchStart}
           onTouchMove={handleWheelMove}

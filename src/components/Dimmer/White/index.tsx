@@ -1,5 +1,6 @@
 import { isUndefined } from 'lodash-es';
 import { View, Text } from '@ray-js/ray';
+import clsx from 'clsx';
 import { useProps, useSupport, utils } from '@ray-js/panel-sdk';
 import React from 'react';
 import { useThrottleFn } from 'ahooks';
@@ -13,6 +14,7 @@ const { bright_value, temp_value } = lampSchemaMap;
 
 interface IProps {
   style?: React.CSSProperties;
+  className?: string;
   temperature?: number;
   brightness?: number;
   onRelease: (code: string, value: number) => void;
@@ -21,7 +23,7 @@ interface IProps {
 }
 
 export const White = (props: IProps) => {
-  const { style, onRelease, onChange, setScrollEnabled } = props;
+  const { style, className, onRelease, onChange, setScrollEnabled } = props;
   const support = useSupport();
   const brightnessDp = useProps(dpState => dpState.bright_value);
   const temperatureDp = useProps(dpState => dpState.temp_value);
@@ -63,9 +65,9 @@ export const White = (props: IProps) => {
 
   // חישוב תווית טמפרטורה (Warm/Cool/Neutral)
   const getTempLabel = () => {
-    if (temperatureKelvin > 6500) return 'Cool';
-    if (temperatureKelvin > 3500) return 'Neutral';
-    return 'Warm';
+    if (temperatureKelvin > 6500) return ' Cool ';
+    if (temperatureKelvin > 3500) return ' Neutral ';
+    return ' Warm ';
   };
 
   // Track styles - matched to wrapper dimensions
@@ -87,7 +89,7 @@ export const White = (props: IProps) => {
   };
 
   return (
-    <View style={style} className={styles.container}>
+    <View style={style} className={clsx(styles.container, className || '')}>
       {/* === BRIGHTNESS SLIDER === */}
       {support.isSupportBright() && (
         <View className={styles.sliderCard}>
@@ -122,7 +124,7 @@ export const White = (props: IProps) => {
           <View className={styles.sliderHeader}>
             <Text className={styles.label}>{Strings.getLang('temp')}</Text>
             <Text className={styles.valueTemp}>
-              {temperatureKelvin}K {getTempLabel()}
+              {temperatureKelvin}K - {getTempLabel()}
             </Text>
           </View>
           <View

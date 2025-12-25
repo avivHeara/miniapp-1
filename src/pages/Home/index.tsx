@@ -171,25 +171,24 @@ export function Home(props: Props) {
       const { brightness: bright, temperature: temp } = data;
       controlData = { hue: 0, saturation: 0, value: 0, bright, temp };
     }
-    // NEUTRALIZED DP CALL
-    // dpStructuredActions.control_data.set(controlData, { throttle: 50 });
-    console.log('🔴 Neutralized control_data.set:', controlData);
+    // RESTORED DP CALL
+    dpStructuredActions.control_data.set(controlData, { throttle: 50 });
   };
 
   const handleRelease = (code: string, value: any) => {
-    console.log('🔴 handleRelease neutralized:', code, value);
     if (code === colour_data.code) {
       // Local update for release
       setLocalColour({ ...localColour, ...value });
-
-      // NEUTRALIZED DP CALL
-      // dpStructuredActions[code].set(value, { throttle: 50, immediate: true });
+      // RESTORED DP CALL
+      dpStructuredActions[code].set(value, { throttle: 50, immediate: true });
     } else {
-      // dpActions[code].set(value, { throttle: 50 });
+      // RESTORED DP CALL
+      dpActions[code].set(value, { throttle: 50 });
     }
   };
 
   const handleReleaseWhite = (value: any) => {
+    // Correctly publish multiple DPS for white mode
     devices.lamp.publishDps(value, { throttle: 50 });
   };
 

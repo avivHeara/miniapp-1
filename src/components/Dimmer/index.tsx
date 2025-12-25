@@ -106,8 +106,8 @@ export const Dimmer = React.memo((props: IProps) => {
   return (
     <Box
       style={style}
-      className={clsx(styles.container, className)}
-      contentClassName={clsx(styles.boxContent, contentClassName)}
+      className={clsx(styles.container, className || '')}
+      contentClassName={clsx(styles.boxContent, contentClassName || '')}
       title={showTitle ? Strings.getLang('dimming') : ''}
     >
       {/* Refactored TabBar */}
@@ -139,9 +139,9 @@ export const Dimmer = React.memo((props: IProps) => {
       )}
 
       {/* ANIMATED SWAP CONTENT - Only active in Adjustment Meta-Mode */}
-      <View className={styles.contentArea}>
+      <View className={styles.contentArea || ''}>
         {activeMetaMode === ADJUSTMENT_TAB ? (
-          <View style={{ position: 'relative', width: '100%', height: '800rpx' }}>
+          <>
             {/* WHITE (SLIDERS) */}
             <View
               className={clsx(
@@ -155,6 +155,7 @@ export const Dimmer = React.memo((props: IProps) => {
                 {...commonProps}
                 brightness={props.brightness}
                 temperature={props.temperature}
+                style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
               />
             </View>
 
@@ -171,12 +172,13 @@ export const Dimmer = React.memo((props: IProps) => {
                 {...commonProps}
                 colour={props.colour}
                 currentLampName={props.deviceName}
+                style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
               />
             </View>
-          </View>
+          </>
         ) : (
           /* FIXED MODES (SCENE/MUSIC) */
-          <View style={{ position: 'relative', width: '100%' }}>
+          <View style={{ position: 'relative', width: '100%', height: '100%' }}>
             {mode === 'scene' && <Scene style={{ position: 'relative', width: '100%' }} />}
             {mode === 'music' && support.isSupportDp(music_data.code) && (
               <Music style={{ position: 'relative', width: '100%' }} />
