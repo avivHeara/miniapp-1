@@ -24,13 +24,13 @@ import { devices } from '@/devices';
 
 import {
   PowerButton,
-  Dimmer,
   DeviceSelector,
   BottomNav,
   ModeTabs,
-  TimerContent,
-  ShabbatContent,
 } from '@/components';
+import { Dimmer } from '@/components/Features/Dimmer';
+import { TimerFeature as TimerContent } from '@/components/Features/TimerFeature';
+import { SchedulingFeature as ShabbatContent } from '@/components/Features/SchedulingFeature';
 
 import type { NavTab, LightMode } from '@/components';
 

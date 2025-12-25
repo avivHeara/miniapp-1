@@ -1,21 +1,17 @@
 /**
  * Components Index
- * ייצוא כל הקומפוננטות
+ * Exporting Base and Common components.
+ * Features are imported directly to avoid circular dependencies.
  */
 
-export { TabBar } from './TabBar';
-export { PowerButton } from './PowerButton';
-export { Button } from './Button';
-export { CollectColors } from './CollectColors';
-export { CoolBarCard } from './CoolBarCard';
-export { SceneCard } from './SceneCard';
-export { Box } from './Box';
-export { Dimmer } from './Dimmer';
+// Base Components
+export { Box } from './Base/Box';
+export { Button } from './Base/Button';
 
-export { DeviceSelector } from './DeviceSelector';
-export { BottomNav } from './BottomNav';
-export type { NavTab } from './BottomNav';
-export { ModeTabs } from './ModeTabs';
-export type { LightMode } from './ModeTabs';
-export { TimerContent } from './TimerContent';
-export { ShabbatContent } from './ShabbatContent';
+// Common Components
+export { BottomNav } from './Common/BottomNav';
+export type { NavTab } from './Common/BottomNav';
+export { DeviceSelector } from './Common/DeviceSelector';
+export { ModeTabs } from './Common/ModeTabs';
+export type { LightMode } from './Common/ModeTabs';
+export { PowerButton } from './Common/PowerButton';
