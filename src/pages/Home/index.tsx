@@ -140,10 +140,18 @@ export function Home(props: Props) {
   // Handlers
   // ========================================
 
-  const handleLightModeChange = (mode: LightMode) => {
-    console.log('🟢 handleLightModeChange:', mode);
-    setActiveLightMode(mode);
-    dpActions.work_mode?.set(mode, { checkRepeat: false, throttle: 300 });
+  const handleLightModeChange = (mode: string) => {
+    console.log('🟢 handleLightModeChange (Meta or Raw):', mode);
+    let targetMode = mode;
+    if (mode === 'adjustment') {
+      targetMode = activeLightMode === 'colour' ? 'colour' : 'white';
+    } else if (mode === 'fixed') {
+      targetMode = 'scene';
+    }
+
+    // @ts-ignore
+    setActiveLightMode(targetMode);
+    dpActions.work_mode?.set(targetMode, { checkRepeat: false, throttle: 300 });
   };
 
   const handleNavTabChange = (tab: NavTab) => {
@@ -226,8 +234,8 @@ export function Home(props: Props) {
 
   return (
     <View className={styles.pageContainer}>
-      {/* ===== SPACER - דוחף את DeviceSelector למטה ===== */}
-      <View style={{ height: '160rpx' }} />
+      {/* ===== SPACER - דוחף את DeviceSelector למטה - מוקטן לשיפור מיקום המנורות ===== */}
+      <View style={{ height: '80rpx' }} />
 
       {/* ===== DEVICE SELECTOR ===== */}
       <DeviceSelector onEditPress={goToDevices} />

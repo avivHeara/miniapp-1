@@ -8,30 +8,27 @@ import { View, Text } from '@ray-js/ray';
 import clsx from 'clsx';
 import styles from './index.module.less';
 
-export type LightMode = 'white' | 'colour' | 'scene';
+export type MetaMode = 'adjustment' | 'fixed';
 
 interface ModeTab {
-  key: LightMode;
+  key: MetaMode;
   label: string;
   icon: string;
 }
 
 const MODE_TABS: ModeTab[] = [
-  { key: 'white', label: 'White', icon: '💡' },
-  { key: 'colour', label: 'Color', icon: '🎨' },
-  { key: 'scene', label: 'Scenes', icon: '🎬' },
+  { key: 'adjustment', label: 'כיונון ויצירה', icon: '🎨' },
+  { key: 'fixed', label: 'מצבים קבועים', icon: '🎬' },
 ];
 
 interface ModeTabsProps {
-  activeMode: LightMode;
-  onChange: (mode: LightMode) => void;
+  activeMode: string; // Keep string for flexibility
+  onChange: (mode: MetaMode) => void;
 }
 
 export const ModeTabs: React.FC<ModeTabsProps> = ({ activeMode, onChange }) => {
-  const handlePress = (mode: LightMode) => {
-    console.log('=== ModeTabs handlePress ===', mode);
-    onChange(mode);
-  };
+  // Determine which meta-mode is active based on the actual raw mode
+  const currentMetaMode = ['white', 'colour'].includes(activeMode) ? 'adjustment' : 'fixed';
 
   return (
     <View className={styles.container}>
@@ -40,17 +37,17 @@ export const ModeTabs: React.FC<ModeTabsProps> = ({ activeMode, onChange }) => {
           key={mode.key}
           className={clsx(
             styles.tab,
-            activeMode === mode.key && styles.tabActive
+            currentMetaMode === mode.key && styles.tabActive
           )}
-          onTap={() => handlePress(mode.key)}
-          onClick={() => handlePress(mode.key)}
+          onTap={() => onChange(mode.key)}
+          onClick={() => onChange(mode.key)}
           hoverClass={styles.tabHover}
         >
           <Text className={styles.tabIcon}>{mode.icon}</Text>
           <Text
             className={clsx(
               styles.tabText,
-              activeMode === mode.key && styles.tabTextActive
+              currentMetaMode === mode.key && styles.tabTextActive
             )}
           >
             {mode.label}

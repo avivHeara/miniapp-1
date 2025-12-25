@@ -1,4 +1,6 @@
 import React from 'react';
+import { View } from '@ray-js/ray';
+import clsx from 'clsx';
 import { DpState, useSupport } from '@ray-js/panel-sdk';
 import { useCreation } from 'ahooks';
 import { lampSchemaMap } from '@/devices/schema';
@@ -10,6 +12,8 @@ import { Scene } from './Scene';
 import { Music } from './Music';
 import { White } from './White';
 import { Colour } from './Colour';
+
+import styles from './index.module.less';
 
 const { bright_value, temp_value, colour_data, scene_data, music_data } = lampSchemaMap;
 
@@ -68,23 +72,25 @@ export const Dimmer = React.memo((props: IProps) => {
 
   const support = useSupport();
 
-  // 根据支持的路数生成 tabBar
-  const workModeTabs = useCreation(() => {
-    const tabs = [];
-    if ((support.isSupportTemp() || support.isSupportBright()) && validWorkMode.includes('white')) {
-      tabs.push('white');
+  // Refactor Tab Bar into two meta-modes
+  const ADJUSTMENT_TAB = 'adjustment';
+  const FIXED_TAB = 'fixed';
+
+  const activeMetaMode = ['white', 'colour'].includes(mode) ? ADJUSTMENT_TAB : FIXED_TAB;
+
+  const handleTabClick = (tabKey: string) => {
+    if (tabKey === ADJUSTMENT_TAB) {
+      // Switch back to previous preference or default to colour if moving from fixed
+      onModeChange?.(mode === 'white' ? 'white' : 'colour');
+    } else {
+      onModeChange?.('scene'); // Default to scene for fixed
     }
-    if (support.isSupportColour() && validWorkMode.includes('colour')) {
-      tabs.push('colour');
-    }
-    if (support.isSupportDp(scene_data.code) && validWorkMode.includes('scene')) {
-      tabs.push('scene');
-    }
-    if (support.isSupportDp(music_data.code) && validWorkMode.includes('music')) {
-      tabs.push('music');
-    }
-    return tabs;
-  }, []);
+  };
+
+  const workModeTabs = [
+    { key: ADJUSTMENT_TAB, label: 'כיונון ויצירה' },
+    { key: FIXED_TAB, label: 'מצבים קבועים' },
+  ];
 
   const handleChooseColor = (data: COLOUR & WHITE) => {
     const { hue, saturation, value, brightness: bright, temperature: temp } = data;
@@ -95,52 +101,34 @@ export const Dimmer = React.memo((props: IProps) => {
     }
   };
 
-  const DimmerContent = useCreation(() => {
-    const commonProps = { onChange, onRelease, setScrollEnabled };
-    const genStyle = (m: WorkMode) => {
-      return {
-        visibility: mode === m ? 'visible' : 'hidden',
-        position: mode === m ? 'relative' : 'absolute',
-        top: 0,
-      } as React.CSSProperties;
-    };
-    return (
-      <>
-        <Colour {...commonProps} style={genStyle('colour')} colour={props.colour} currentLampName={props.deviceName} />
-        <White
-          {...commonProps}
-          style={genStyle('white')}
-          brightness={props.brightness}
-          temperature={props.temperature}
-        />
-        <Scene style={genStyle('scene')} />
-        {support.isSupportDp(music_data.code) && <Music style={genStyle('music')} />}
-      </>
-    );
-  }, [mode, props.brightness, props.temperature, props.colour]);
+  const commonProps = { onChange, onRelease, setScrollEnabled };
 
   return (
     <Box
       style={style}
-      className={className}
-      contentClassName={contentClassName}
+      className={clsx(styles.container, className)}
+      contentClassName={clsx(styles.boxContent, contentClassName)}
       title={showTitle ? Strings.getLang('dimming') : ''}
     >
-      {/* הצג טאבים רק אם hideTabs=false */}
-      {!hideTabs && workModeTabs.length > 1 && (
+      {/* Refactored TabBar */}
+      {!hideTabs && (
         <TabBar
-          itemWidth={`${100 / (workModeTabs.length ?? 2)}%`}
+          itemWidth="50%"
           itemHeight={56}
-          value={['colour', 'white', 'scene', 'music'].includes(mode) ? mode : 'white'}
-          tabList={workModeTabs}
-          onClick={v => onModeChange?.(v)}
+          value={activeMetaMode}
+          tabList={workModeTabs.map(t => t.key)}
+          // Custom render for TabBar might be needed if it doesn't support labels,
+          // but assuming TabBar takes a list of keys and we can map them in i18n or Props if it supports labels.
+          // Looking at previous TabBar usage: it took workModeTabs which were raw modes.
+          // I will use raw strings and map them in the TabBar UI if possible, or just use the labels as keys.
+          onClick={handleTabClick}
         />
       )}
 
-      {/* הצג צבעי אוסף רק אם hideCollectColors=false */}
-      {!hideCollectColors && ['white', 'colour'].indexOf(mode) !== -1 && (
+      {/* Show color collection only in adjustment modes */}
+      {!hideCollectColors && activeMetaMode === ADJUSTMENT_TAB && (
         <CollectColors
-          style={{ justifyContent: 'start', width: '100%', margin: '32rpx 0' }}
+          style={{ justifyContent: 'start', width: '100%', margin: '24rpx 0' }}
           showAdd={canEdit}
           isColor={mode === 'colour'}
           colourData={colour}
@@ -150,7 +138,52 @@ export const Dimmer = React.memo((props: IProps) => {
         />
       )}
 
-      {DimmerContent}
+      {/* ANIMATED SWAP CONTENT - Only active in Adjustment Meta-Mode */}
+      <View className={styles.contentArea}>
+        {activeMetaMode === ADJUSTMENT_TAB ? (
+          <View style={{ position: 'relative', width: '100%', height: '800rpx' }}>
+            {/* WHITE (SLIDERS) */}
+            <View
+              className={clsx(
+                styles.swapWrapper,
+                mode === 'white' ? styles.stateMain : styles.stateMini
+              )}
+              onClick={() => mode === 'colour' && onModeChange?.('white')}
+            >
+              <View className={styles.miniBackground} />
+              <White
+                {...commonProps}
+                brightness={props.brightness}
+                temperature={props.temperature}
+              />
+            </View>
+
+            {/* COLOUR (WHEEL) */}
+            <View
+              className={clsx(
+                styles.swapWrapper,
+                mode === 'colour' ? styles.stateMain : styles.stateMini
+              )}
+              onClick={() => mode === 'white' && onModeChange?.('colour')}
+            >
+              <View className={styles.miniBackground} />
+              <Colour
+                {...commonProps}
+                colour={props.colour}
+                currentLampName={props.deviceName}
+              />
+            </View>
+          </View>
+        ) : (
+          /* FIXED MODES (SCENE/MUSIC) */
+          <View style={{ position: 'relative', width: '100%' }}>
+            {mode === 'scene' && <Scene style={{ position: 'relative', width: '100%' }} />}
+            {mode === 'music' && support.isSupportDp(music_data.code) && (
+              <Music style={{ position: 'relative', width: '100%' }} />
+            )}
+          </View>
+        )}
+      </View>
     </Box>
   );
 });
