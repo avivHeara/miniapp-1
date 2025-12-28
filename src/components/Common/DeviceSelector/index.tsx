@@ -4,12 +4,20 @@
  */
 
 import React from 'react';
-import { View, Text } from '@ray-js/ray';
+import { View, Text, Image } from '@ray-js/ray';
 import clsx from 'clsx';
 import { useProps, useActions } from '@ray-js/panel-sdk';
 import styles from './index.module.less';
 
 const DEVICE_ENUM_VALUES = ['Device1', 'Device2', 'Device3'] as const;
+
+// --- Icons as Data URLs ---
+const getSvgDataUrl = (path: string, color: string) => {
+    const svg = `<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${path}</g></svg>`;
+    return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+};
+
+const EDIT_ICON = (color: string) => getSvgDataUrl('<path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>', color);
 
 interface DeviceSelectorProps {
     onEditPress?: () => void;
@@ -67,7 +75,7 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({ onEditPress }) =
                 onTap={handleEditPress}
                 hoverClass={styles.editBtnHover}
             >
-                <Text className={styles.editIcon}>✏️</Text>
+                <Image src={EDIT_ICON('#00e5ff')} className={styles.editIconImage} />
             </View>
 
             {/* טאבים - סדר RTL */}

@@ -58,7 +58,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
     };
 
     const renderIcon = (iconKey: string, active: boolean) => {
-        const color = active ? '#ff6b00' : 'rgba(255, 255, 255, 0.4)';
+        const color = active ? '#ff9e42' : 'rgba(255, 255, 255, 0.4)';
         const iconFn = ICONS[iconKey];
         if (!iconFn) return null;
         return <Image src={iconFn(color)} className={styles.iconImage} />;

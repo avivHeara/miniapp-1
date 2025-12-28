@@ -1,41 +1,45 @@
 /* SaveSceneButton Styles */
-/* RTL Support + Dark Theme */
+/* Glassmorphism Floating Style - Turquoise (Cyan) Integration */
 
-/* ============ Save Button Bubble ============ */
 .saveButton {
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(calc(-250rpx - 40rpx), calc(360rpx - 40rpx));
+  /* Fine-tuned positioning to align with overall balance */
+  transform: translate(calc(-250rpx - 40rpx), calc(360rpx - 44rpx));
 
-  width: 88rpx;
-  height: 88rpx;
+  width: 90rpx;
+  height: 90rpx;
   border-radius: 50%;
-  background: rgba(255, 107, 0, 0.8);
+  background: rgba(0, 229, 255, 0.05) !important;
+  /* Subtle Turquoise */
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8rpx 24rpx rgba(255, 107, 0, 0.3);
   z-index: 1000;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(0, 229, 255, 0.15) !important;
+  box-shadow: 0 8rpx 32rpx rgba(0, 229, 255, 0.15);
 
   @supports (backdrop-filter: blur(10px)) {
-    background: rgba(255, 107, 0, 0.6);
+    background: rgba(0, 229, 255, 0.03) !important;
     backdrop-filter: blur(12px);
   }
 }
 
 .saveButton:active {
-  transform: translate(calc(-250rpx - 40rpx), calc(360rpx - 40rpx)) scale(0.92);
-  opacity: 0.9;
+  transform: translate(calc(-250rpx - 40rpx), calc(360rpx - 44rpx)) scale(0.92);
+  background: rgba(0, 229, 255, 0.1) !important;
+  box-shadow: 0 4rpx 12rpx rgba(0, 229, 255, 0.2);
 }
 
 .saveIconImage {
   width: 44rpx;
   height: 44rpx;
+  opacity: 0.95;
+  /* Turquoise glow to match the edit button */
+  filter: drop-shadow(0 0 12rpx rgba(0, 229, 255, 0.6));
 }
-
 
 /* ============ Modal Overlay - Z-INDEX VERY HIGH ============ */
 .modalOverlay {
@@ -62,16 +66,16 @@
   }
 }
 
-/* ============ Modal Content ============ */
 .modalContent {
   width: 620rpx;
-  background: linear-gradient(180deg, #2a2a30 0%, #1a1a1f 100%);
-  border-radius: 24rpx;
-  padding: 32rpx;
+  background: linear-gradient(180deg, #1a2a2f 0%, #0d1619 100%);
+  /* Darker teal gradient */
+  border-radius: 28rpx;
+  padding: 36rpx;
   direction: rtl;
-  border: 1px solid rgba(255, 165, 0, 0.3);
-  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.5);
-  animation: slideUp 0.25s ease-out;
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  box-shadow: 0 12rpx 48rpx rgba(0, 0, 0, 0.6);
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 9999999;
   position: relative;
 }
@@ -79,7 +83,7 @@
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(40rpx);
+    transform: translateY(60rpx);
   }
 
   to {
@@ -88,221 +92,223 @@
   }
 }
 
-/* ============ Modal Header ============ */
 .modalHeader {
   text-align: center;
-  margin-bottom: 28rpx;
+  margin-bottom: 32rpx;
 }
 
 .modalTitle {
-  font-size: 36rpx;
+  font-size: 38rpx;
   font-weight: 600;
   color: #ffffff;
   display: block;
+  letter-spacing: 0.5rpx;
 }
 
 .modalSubtitle {
   font-size: 24rpx;
-  color: rgba(255, 165, 0, 0.7);
+  color: rgba(0, 229, 255, 0.7);
   margin-top: 8rpx;
   display: block;
 }
 
-/* ============ Input Group ============ */
 .inputGroup {
-  margin-bottom: 24rpx;
+  margin-bottom: 28rpx;
 }
 
 .inputLabel {
   font-size: 26rpx;
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 12rpx;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 14rpx;
   display: block;
 }
 
 .input {
   width: 100%;
-  height: 80rpx;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12rpx;
-  padding: 0 20rpx;
-  font-size: 28rpx;
+  height: 88rpx;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16rpx;
+  padding: 0 24rpx;
+  font-size: 30rpx;
   color: #ffffff;
   direction: rtl;
   text-align: right;
+  transition: all 0.2s;
 }
 
 .input:focus {
-  border-color: rgba(255, 165, 0, 0.5);
-  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(0, 229, 255, 0.5);
+  background: rgba(255, 255, 255, 0.08);
 }
 
-/* ============ Radio Group ============ */
 .radioGroup {
-  margin-bottom: 24rpx;
+  margin-bottom: 32rpx;
 }
 
 .radioLabel {
   font-size: 26rpx;
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 14rpx;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 16rpx;
   display: block;
 }
 
 .radioOption {
   display: flex;
   align-items: center;
-  padding: 14rpx 18rpx;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12rpx;
-  margin-bottom: 10rpx;
-  transition: all 0.2s ease;
-}
-
-.radioOption:active {
-  background: rgba(255, 165, 0, 0.15);
+  padding: 18rpx 22rpx;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16rpx;
+  margin-bottom: 12rpx;
+  transition: all 0.2s;
 }
 
 .radioSelected {
-  background: rgba(255, 165, 0, 0.15);
-  border-color: rgba(255, 165, 0, 0.5);
+  background: rgba(0, 229, 255, 0.1);
+  border-color: rgba(0, 229, 255, 0.4);
 }
 
 .radioCircle {
-  width: 36rpx;
-  height: 36rpx;
+  width: 38rpx;
+  height: 38rpx;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  margin-left: 14rpx;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  margin-left: 16rpx;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .radioSelected .radioCircle {
-  border-color: #ff9800;
+  border-color: #00e5ff;
 }
 
 .radioInner {
-  width: 18rpx;
-  height: 18rpx;
+  width: 22rpx;
+  height: 22rpx;
   border-radius: 50%;
-  background: #ff9800;
+  background: #00e5ff;
+  box-shadow: 0 0 10rpx rgba(0, 229, 255, 0.5);
 }
 
 .radioText {
-  font-size: 26rpx;
-  color: rgba(255, 255, 255, 0.9);
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.95);
 }
 
-/* ============ Preview - ALL PARAMETERS ============ */
 .preview {
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 14rpx;
-  padding: 18rpx 20rpx;
-  margin-bottom: 24rpx;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 20rpx;
+  padding: 22rpx 24rpx;
+  margin-bottom: 32rpx;
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .previewTitle {
   font-size: 24rpx;
-  color: rgba(255, 165, 0, 0.9);
-  margin-bottom: 14rpx;
+  color: rgba(0, 229, 255, 0.9);
+  margin-bottom: 16rpx;
   display: block;
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1rpx;
 }
 
 .previewItems {
   display: flex;
   flex-direction: column;
-  gap: 10rpx;
+  gap: 12rpx;
 }
 
 .previewRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6rpx 0;
+  padding: 8rpx 0;
+  border-bottom: 1rpx solid rgba(255, 255, 255, 0.03);
+}
+
+.previewRow:last-child {
+  border-bottom: none;
 }
 
 .previewLabel {
-  font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.6);
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .previewValue {
-  font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.9);
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.95);
   font-weight: 500;
 }
 
 .previewValueActive {
-  font-size: 24rpx;
-  color: #ff9800;
+  font-size: 26rpx;
+  color: #00e5ff;
   font-weight: 600;
 }
 
 .colorPreviewRow {
   display: flex;
   align-items: center;
-  gap: 12rpx;
+  gap: 16rpx;
 }
 
 .colorPreview {
-  width: 36rpx;
-  height: 36rpx;
-  border-radius: 8rpx;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 10rpx;
+  border: 2px solid rgba(255, 255, 255, 0.25);
 }
 
-/* ============ Modal Buttons ============ */
 .modalButtons {
   display: flex;
-  gap: 18rpx;
-  margin-top: 8rpx;
+  gap: 24rpx;
+  margin-top: 12rpx;
 }
 
 .cancelButton {
   flex: 1;
-  height: 80rpx;
+  height: 90rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12rpx;
-  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16rpx;
+  transition: all 0.2s;
 }
 
 .cancelButton:active {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .cancelText {
-  font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: 30rpx;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .confirmButton {
-  flex: 1;
-  height: 80rpx;
+  flex: 1.2;
+  height: 90rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
-  border-radius: 12rpx;
-  transition: all 0.2s ease;
+  background: linear-gradient(135deg, #00e5ff 0%, #0097a7 100%);
+  border-radius: 16rpx;
+  box-shadow: 0 8rpx 20rpx rgba(0, 229, 255, 0.2);
+  transition: all 0.2s;
 }
 
 .confirmButton:active {
-  background: linear-gradient(135deg, #f57c00 0%, #e65100 100%);
-  transform: scale(0.98);
+  transform: scale(0.96);
+  opacity: 0.9;
 }
 
 .confirmText {
-  font-size: 28rpx;
-  color: #ffffff;
-  font-weight: 600;
+  font-size: 30rpx;
+  color: #001a1d;
+  font-weight: 700;
 }

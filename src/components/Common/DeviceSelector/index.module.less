@@ -98,27 +98,29 @@
     width: 96rpx;
     height: 96rpx;
     border-radius: 50%;
-    background: rgba(0, 229, 255, 0.1);
-    border: 2rpx solid rgba(0, 229, 255, 0.3);
+    background: rgba(0, 229, 255, 0.05); // Subtle Cyan
+    border: 1px solid rgba(0, 229, 255, 0.15);
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     cursor: pointer;
     pointer-events: auto;
-    box-shadow: 0 0 30rpx rgba(0, 229, 255, 0.15);
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+
+    @supports (backdrop-filter: blur(10px)) {
+        background: rgba(0, 229, 255, 0.03);
+        backdrop-filter: blur(8px);
+    }
 }
 
 .editBtnHover {
-    background: rgba(0, 229, 255, 0.2);
-    box-shadow: 0 0 40rpx rgba(0, 229, 255, 0.3);
-    transform: scale(0.95);
+    background: rgba(0, 229, 255, 0.1);
+    transform: scale(0.92);
 }
 
-.editIcon {
-    font-size: 36rpx;
-    line-height: 36rpx;
-    pointer-events: none;
+.editIconImage {
+    width: 40rpx;
+    height: 40rpx;
+    opacity: 0.8;
 }

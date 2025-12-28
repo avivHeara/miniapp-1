@@ -193,6 +193,15 @@ export const Colour = (props: IProps) => {
                     position: 'relative',
                 }}
             >
+                {/* Dynamic Color Spread (Glow/Halo) */}
+                <View
+                    className={styles.colorSpread}
+                    style={{
+                        backgroundColor: 'transparent', // We'll use conic-gradient in CSS
+                        opacity: 0.5, // Static opacity
+                    }}
+                />
+
                 {/* @ts-ignore */}
                 <LampCirclePickerColor
                     radius={WHEEL_RADIUS}

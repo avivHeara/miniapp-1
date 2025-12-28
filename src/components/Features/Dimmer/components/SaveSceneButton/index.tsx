@@ -205,7 +205,11 @@ export const SaveSceneButton: React.FC<Props> = ({
   return (
     <>
       {/* Save Button Bubble */}
-      <View style={style} className={styles.saveButton} onClick={handleOpenModal}>
+      <View
+        style={style}
+        className={styles.saveButton}
+        onClick={handleOpenModal}
+      >
         <Image src={SAVE_ICON('#ffffff')} className={styles.saveIconImage} />
       </View>
 

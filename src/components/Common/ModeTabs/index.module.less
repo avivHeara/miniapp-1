@@ -34,14 +34,15 @@
 }
 
 .tabActive {
-    background: #ff6b00; // Electric Orange
+    background: linear-gradient(135deg, #ff9e42 0%, #ff6b00 100%);
     border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4rpx 16rpx rgba(255, 107, 0, 0.3);
+    box-shadow: 0 8rpx 20rpx rgba(255, 107, 0, 0.3);
 
     @supports (backdrop-filter: blur(10px)) {
-        background: rgba(255, 107, 0, 0.85);
+        background: linear-gradient(135deg, rgba(255, 158, 66, 0.9) 0%, rgba(255, 107, 0, 0.85) 100%);
     }
 }
+
 
 .tabIconImage {
     width: 32rpx;
