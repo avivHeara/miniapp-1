@@ -30,7 +30,18 @@ export const Scene: React.FC<Props> = ({ style }) => {
             {/* CoolBarCard removed */}
             <View className={styles.contentBox}>
                 {getDefaultScenes().map(item => {
-                    return <SceneCard key={item.sceneId} data={item} onClick={() => handlePutScene(item)} />;
+                    const sceneNameMap: Record<string, string> = {
+                        'Good Night': 'לילה טוב',
+                        'Reading': 'קריאה',
+                        'Working': 'עבודה',
+                        'Leisure': 'מנוחה',
+                        'Ocean': 'אוקיינוס',
+                        'Sunflower': 'חמנייה',
+                        'Grassland Green': 'שדה ירוק',
+                        'Dazzling': 'מסנוור'
+                    };
+                    const displayName = sceneNameMap[item.sceneName] || item.sceneName;
+                    return <SceneCard key={item.sceneId} data={{ ...item, sceneName: displayName }} onClick={() => handlePutScene(item)} />;
                 })}
             </View>
         </View>

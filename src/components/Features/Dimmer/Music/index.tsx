@@ -1,11 +1,10 @@
 import { find } from 'lodash-es';
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useUnmount } from 'ahooks';
-import { View } from '@ray-js/ray';
+import { View, Text, Image } from '@ray-js/ray';
 import { useProps, utils, kit, useStructuredActions } from '@ray-js/panel-sdk';
-import LampMusicCard from '@ray-js/lamp-music-card';
+import clsx from 'clsx';
 import defaultConfig from '@/config/default';
-import Strings from '@/i18n';
 import styles from './index.module.less';
 
 const { defaultAppMusicList } = defaultConfig;
@@ -69,13 +68,15 @@ export const Music: React.FC<Props> = ({ style }) => {
     const appMusicList = useMemo(
         () =>
             musicKey.map((item, index) => {
+                const musicNameMap: Record<string, string> = {
+                    'music': 'קצב מוזיקה',
+                    'romance': 'רומנטי',
+                    'game': 'משחק'
+                };
                 return {
                     id: index,
                     icon: `/images/music_${item}.png`,
-                    title: Strings.getLang(`music_${item}`),
-                    colorArr: defaultAppMusicList?.[index]?.colorArea?.map(v =>
-                        utils.hsv2rgbString(v.hue, v.saturation, v.value)
-                    ),
+                    title: musicNameMap[item] || item,
                 };
             }),
         []
@@ -90,18 +91,17 @@ export const Music: React.FC<Props> = ({ style }) => {
 
     return (
         <View style={style} className={styles.list}>
-            {/* CoolBarCard removed */}
             <View className={styles.content}>
-                {appMusicList.map(item => {
-                    return (
-                        <LampMusicCard
-                            key={item.id}
-                            active={item.id === activeId}
-                            data={item}
-                            onPlay={handlePlay(item)}
-                        />
-                    );
-                })}
+                {appMusicList.map(item => (
+                    <View
+                        key={item.id}
+                        className={clsx(styles.card, activeId === item.id && styles.cardActive)}
+                        onClick={handlePlay(item)}
+                    >
+                        <Image className={styles.icon} src={item.icon} />
+                        <Text className={styles.title}>{item.title}</Text>
+                    </View>
+                ))}
             </View>
         </View>
     );

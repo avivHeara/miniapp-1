@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text } from '@ray-js/ray';
+import React, { useState } from 'react';
+import { View, Text, showActionSheet, getStorageSync } from '@ray-js/ray';
 import clsx from 'clsx';
 import { DpState, useSupport } from '@ray-js/panel-sdk';
 import { lampSchemaMap } from '@/devices/schema';
@@ -155,30 +155,59 @@ export const Dimmer = React.memo((props: IProps) => {
                     </>
                 ) : (
                     <View className={styles.fixedWrapper}>
-                        {/* Sub-tabs for Fixed Mode */}
-                        <View className={styles.subTabs}>
-                            <View
-                                className={clsx(styles.subTab || '', mode === 'scene' && (styles.subTabActive || ''))}
-                                onClick={() => onModeChange?.('scene')}
-                            >
-                                <Text className={styles.subTabText || ''}>סצינות</Text>
-                            </View>
-                            {support.isSupportDp(lampSchemaMap.music_data.code) && (
-                                <View
-                                    className={clsx(styles.subTab || '', mode === 'music' && (styles.subTabActive || ''))}
-                                    onClick={() => onModeChange?.('music')}
-                                >
-                                    <Text className={styles.subTabText || ''}>מוזיקה</Text>
-                                </View>
-                            )}
+                        {/* SCENES SECTION */}
+                        <View className={styles.section}>
+                            <Text className={styles.sectionTitle}>מצבים</Text>
+                            <Scene style={{ width: '100%' }} />
                         </View>
 
-                        <View className={styles.fixedContent}>
-                            {mode === 'scene' && <Scene style={{ width: '100%' }} />}
-                            {mode === 'music' && (
-                                <Music style={{ width: '100%' }} />
-                            )}
+                        {/* SAVED SCENES DROPDOWN */}
+                        <View className={styles.savedScenesRow}>
+                            <View
+                                className={styles.savedScenesDropdown}
+                                onClick={() => {
+                                    const saved = getStorageSync('custom_scenes') || [];
+                                    if (saved.length === 0) {
+                                        showActionSheet({
+                                            itemList: ['אין מצבים שמורים'],
+                                            success: () => { }
+                                        });
+                                        return;
+                                    }
+                                    showActionSheet({
+                                        itemList: saved.map((s: any) => s.name),
+                                        success: (res) => {
+                                            const selectedScene = saved[res.tapIndex];
+                                            showActionSheet({
+                                                itemList: ['הפעל מצב', 'ערוך מצב'],
+                                                success: (actionRes) => {
+                                                    if (actionRes.tapIndex === 0) {
+                                                        // Activate scene
+                                                        if (selectedScene.data) {
+                                                            onRelease?.(lampSchemaMap.scene_data.code, selectedScene.data);
+                                                        }
+                                                    } else {
+                                                        // Edit scene - placeholder for now
+                                                        console.log('Edit scene:', selectedScene);
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    });
+                                }}
+                            >
+                                <Text className={styles.dropdownText}>מצבים שמורים...</Text>
+                                <View className={styles.dropdownArrow} />
+                            </View>
                         </View>
+
+                        {/* MUSIC SECTION */}
+                        {support.isSupportDp(lampSchemaMap.music_data.code) && (
+                            <View className={styles.section}>
+                                <Text className={styles.sectionTitle}>מוזיקה</Text>
+                                <Music style={{ width: '100%' }} />
+                            </View>
+                        )}
                     </View>
                 )}
             </View>
