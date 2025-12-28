@@ -7,27 +7,35 @@
   left: 50%;
   top: 50%;
   transform: translate(calc(-250rpx - 40rpx), calc(360rpx - 40rpx));
-  
-  width: 80rpx;
-  height: 80rpx;
+
+  width: 88rpx;
+  height: 88rpx;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(255, 165, 0, 0.9) 0%, rgba(255, 140, 0, 0.8) 100%);
+  background: rgba(255, 107, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4rpx 16rpx rgba(255, 165, 0, 0.4);
+  box-shadow: 0 8rpx 24rpx rgba(255, 107, 0, 0.3);
   z-index: 1000;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  @supports (backdrop-filter: blur(10px)) {
+    background: rgba(255, 107, 0, 0.6);
+    backdrop-filter: blur(12px);
+  }
 }
 
 .saveButton:active {
-  transform: translate(calc(-250rpx - 40rpx), calc(360rpx - 40rpx)) scale(0.9);
-  box-shadow: 0 2rpx 8rpx rgba(255, 165, 0, 0.3);
+  transform: translate(calc(-250rpx - 40rpx), calc(360rpx - 40rpx)) scale(0.92);
+  opacity: 0.9;
 }
 
-.saveIcon {
-  font-size: 36rpx;
+.saveIconImage {
+  width: 44rpx;
+  height: 44rpx;
 }
+
 
 /* ============ Modal Overlay - Z-INDEX VERY HIGH ============ */
 .modalOverlay {
@@ -45,8 +53,13 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 /* ============ Modal Content ============ */
@@ -68,6 +81,7 @@
     opacity: 0;
     transform: translateY(40rpx);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

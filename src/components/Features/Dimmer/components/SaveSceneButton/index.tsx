@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, Input, showToast } from '@ray-js/ray';
+import { View, Text, Input, showToast, Image } from '@ray-js/ray';
 import { useDispatch, useSelector } from 'react-redux';
 import { addScene, selectCanAddScene, selectScenesCount } from '@/redux/modules/savedScenesSlice';
 import type { AppDispatch } from '@/redux';
@@ -39,14 +39,14 @@ export const SaveSceneButton: React.FC<Props> = ({
   const [showModal, setShowModal] = useState(false);
   const [sceneName, setSceneName] = useState('');
   const [saveMode, setSaveMode] = useState<'single' | 'all'>('single');
-  
+
   const isModalContentClick = useRef(false);
 
   const handleOpenModal = () => {
     if (!canAdd) {
-      showToast({ 
-        title: `הגעת למקסימום 6 מצבים. מחק מצב כדי להוסיף חדש.`, 
-        icon: 'none' 
+      showToast({
+        title: `הגעת למקסימום 6 מצבים. מחק מצב כדי להוסיף חדש.`,
+        icon: 'none'
       });
       return;
     }
@@ -74,7 +74,7 @@ export const SaveSceneButton: React.FC<Props> = ({
 
   const handleSave = () => {
     isModalContentClick.current = true;
-    
+
     if (!sceneName.trim()) {
       showToast({ title: 'נא להזין שם למצב', icon: 'none' });
       return;
@@ -102,7 +102,7 @@ export const SaveSceneButton: React.FC<Props> = ({
           ...stateToSave,
         }],
       }));
-      
+
       console.log('💾 Saved single device scene:', {
         name: sceneName.trim(),
         device: currentDevice.deviceName,
@@ -166,15 +166,15 @@ export const SaveSceneButton: React.FC<Props> = ({
           <Text className={styles.previewLabel}>🌡️ טמפרטורה:</Text>
           <Text className={styles.previewValue}>{currentState.temperature}</Text>
         </View>
-        
+
         {/* Colour params */}
         <View className={styles.previewRow}>
           <Text className={styles.previewLabel}>🎨 צבע:</Text>
           <View className={styles.colorPreviewRow}>
-            <View 
+            <View
               className={styles.colorPreview}
-              style={{ 
-                background: `hsl(${currentState.hue || 0}, ${saturationPercent}%, ${Math.max(20, valuePercent / 2)}%)` 
+              style={{
+                background: `hsl(${currentState.hue || 0}, ${saturationPercent}%, ${Math.max(20, valuePercent / 2)}%)`
               }}
             />
             <Text className={styles.previewValue}>
@@ -194,11 +194,19 @@ export const SaveSceneButton: React.FC<Props> = ({
     );
   };
 
+  // --- Icons as Data URLs ---
+  const getSvgDataUrl = (path: string, color: string) => {
+    const svg = `<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="${color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${path}</g></svg>`;
+    return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+  };
+
+  const SAVE_ICON = (color: string) => getSvgDataUrl('<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>', color);
+
   return (
     <>
       {/* Save Button Bubble */}
       <View style={style} className={styles.saveButton} onClick={handleOpenModal}>
-        <Text className={styles.saveIcon}>💾</Text>
+        <Image src={SAVE_ICON('#ffffff')} className={styles.saveIconImage} />
       </View>
 
       {/* Save Modal */}
@@ -228,8 +236,8 @@ export const SaveSceneButton: React.FC<Props> = ({
             {hasMultipleDevices && (
               <View className={styles.radioGroup}>
                 <Text className={styles.radioLabel}>שמור עבור:</Text>
-                
-                <View 
+
+                <View
                   className={`${styles.radioOption} ${saveMode === 'single' ? styles.radioSelected : ''}`}
                   onClick={() => handleRadioClick('single')}
                 >
@@ -241,7 +249,7 @@ export const SaveSceneButton: React.FC<Props> = ({
                   </Text>
                 </View>
 
-                <View 
+                <View
                   className={`${styles.radioOption} ${saveMode === 'all' ? styles.radioSelected : ''}`}
                   onClick={() => handleRadioClick('all')}
                 >
