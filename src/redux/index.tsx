@@ -4,6 +4,7 @@ import { createLogger } from 'redux-logger';
 import { useDispatch } from 'react-redux';
 import uiStateSlice from './modules/uiStateSlice';
 import cloudStateSlice from './modules/cloudStateSlice';
+import savedScenesSlice from './modules/savedScenesSlice';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -19,6 +20,7 @@ const store = configureStore({
   reducer: {
     uiState: uiStateSlice,
     cloudState: cloudStateSlice,
+    savedScenes: savedScenesSlice,
   },
   middleware: getDefaultMiddleware => getDefaultMiddleware().concat(middlewares),
 });

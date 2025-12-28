@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { View, Text, showActionSheet, getStorageSync } from '@ray-js/ray';
+import React, { useCallback } from 'react';
+import { View, Text, showToast } from '@ray-js/ray';
 import clsx from 'clsx';
-import { DpState, useSupport } from '@ray-js/panel-sdk';
+import { DpState, useSupport, useActions, useProps } from '@ray-js/panel-sdk';
 import { lampSchemaMap } from '@/devices/schema';
 import Strings from '@/i18n';
 import { ModeTabs, type MetaMode } from '@/components/Common/ModeTabs';
@@ -11,6 +11,9 @@ import { Music } from './Music';
 import { White } from './White';
 import { Colour } from './Colour';
 import { CollectColors } from './components/CollectColors';
+import { SavedScenesDropdown } from './components/SavedScenesDropdown';
+import { SaveSceneButton } from './components/SaveSceneButton';
+import { SavedScene, SavedDeviceState } from '@/redux/modules/savedScenesSlice';
 
 import styles from './index.module.less';
 
@@ -43,7 +46,14 @@ interface IProps {
     onChange?: (isColor: boolean, value: any) => void;
     setScrollEnabled?: (v: boolean) => void;
     deviceName?: string;
+    deviceId?: string;
 }
+
+const DEFAULT_COLOUR: IColour = {
+    hue: 0,
+    saturation: 0,
+    value: 0,
+};
 
 export const Dimmer = React.memo((props: IProps) => {
     const {
@@ -51,12 +61,13 @@ export const Dimmer = React.memo((props: IProps) => {
         hideTabs = false,
         hideCollectColors = false,
         deviceName = 'מנורה',
+        deviceId = '',
         mode,
         style,
         className,
         contentClassName,
-        temperature,
-        brightness,
+        temperature = 0,
+        brightness = 0,
         colour,
         canEdit = true,
         onModeChange,
@@ -66,7 +77,39 @@ export const Dimmer = React.memo((props: IProps) => {
         setScrollEnabled,
     } = props;
 
+    const safeColour = colour || DEFAULT_COLOUR;
+
     const support = useSupport();
+    const actions = useActions();
+
+    // קבלת שמות המכשירים מה-DP
+    const selectedDeviceKey = useProps(props => props.selected_device) || 'Device1';
+    const devName1 = useProps(props => props.dev_name_1) || 'מנורה 1';
+    const devName2 = useProps(props => props.dev_name_2) || 'מנורה 2';
+    const devName3 = useProps(props => props.dev_name_3) || 'מנורה 3';
+
+    // בניית רשימת כל המכשירים
+    const allDevices = React.useMemo(() => [
+        { deviceId: 'Device1', deviceName: devName1 },
+        { deviceId: 'Device2', deviceName: devName2 },
+        { deviceId: 'Device3', deviceName: devName3 },
+    ], [devName1, devName2, devName3]);
+
+    // המכשיר הנוכחי
+    const currentDevice = React.useMemo(() => {
+        const device = allDevices.find(d => d.deviceId === selectedDeviceKey);
+        return device || allDevices[0];
+    }, [allDevices, selectedDeviceKey]);
+
+    // ה-state הנוכחי (משותף לכל המכשירים)
+    const currentState = React.useMemo(() => ({
+        mode: mode as 'white' | 'colour',
+        brightness: brightness,
+        temperature: temperature,
+        hue: safeColour.hue,
+        saturation: safeColour.saturation,
+        value: safeColour.value,
+    }), [mode, brightness, temperature, safeColour]);
 
     const ADJUSTMENT_TAB = 'adjustment';
     const FIXED_TAB = 'fixed';
@@ -90,6 +133,51 @@ export const Dimmer = React.memo((props: IProps) => {
         }
     };
 
+    // ========== Saved Scenes Handlers ==========
+
+    const handleActivateScene = useCallback((scene: SavedScene) => {
+        console.log('🎬 Activating scene:', scene.name, scene);
+
+        scene.devices.forEach((device: SavedDeviceState) => {
+            // אם זה מצב של מנורה אחת, בדוק שזה המכשיר הנוכחי
+            if (!scene.isMultiDevice && device.deviceId !== selectedDeviceKey) {
+                console.log('⏭️ Skipping device (not current):', device.deviceId);
+                return;
+            }
+
+            console.log('💡 Applying state to device:', device.deviceId, device);
+
+            if (device.mode === 'colour' && device.hue !== undefined) {
+                // הפעלת מצב צבע
+                actions.switch_led?.on({ checkRepeat: false });
+                actions.work_mode?.set('colour', { checkRepeat: false, delay: 100 });
+                onRelease?.(colour_data.code, {
+                    hue: device.hue,
+                    saturation: device.saturation,
+                    value: device.value,
+                });
+                console.log('🎨 Set colour:', { hue: device.hue, saturation: device.saturation, value: device.value });
+            } else if (device.mode === 'white' && device.brightness !== undefined) {
+                // הפעלת מצב לבן
+                actions.switch_led?.on({ checkRepeat: false });
+                actions.work_mode?.set('white', { checkRepeat: false, delay: 100 });
+                onReleaseWhite?.({
+                    [bright_value.code]: device.brightness,
+                    [temp_value.code]: device.temperature,
+                });
+                console.log('💡 Set white:', { brightness: device.brightness, temperature: device.temperature });
+            }
+        });
+
+        // עדכון ה-UI mode
+        const firstDevice = scene.devices[0];
+        if (firstDevice) {
+            onModeChange?.(firstDevice.mode);
+        }
+    }, [selectedDeviceKey, actions, onRelease, onReleaseWhite, onModeChange]);
+
+    // ========== End Saved Scenes ==========
+
     const commonProps = { onChange, onRelease, setScrollEnabled };
 
     return (
@@ -111,7 +199,7 @@ export const Dimmer = React.memo((props: IProps) => {
                     style={{ justifyContent: 'start', width: '100%', margin: '24rpx 0' }}
                     showAdd={canEdit}
                     isColor={mode === 'colour'}
-                    colourData={colour}
+                    colourData={safeColour}
                     brightness={brightness}
                     temperature={temperature}
                     chooseColor={data => handleChooseColor?.(data)}
@@ -121,6 +209,15 @@ export const Dimmer = React.memo((props: IProps) => {
             <View className={clsx(styles.contentArea || '', activeMetaMode === FIXED_TAB && (styles.fixedContentArea || ''))}>
                 {activeMetaMode === ADJUSTMENT_TAB ? (
                     <>
+                        {/* ====== כפתור שמירה - צד שמאל ====== */}
+                        <SaveSceneButton
+                            currentDevice={currentDevice}
+                            allDevices={allDevices}
+                            currentState={currentState}
+                        />
+                        {/* ====== סוף כפתור שמירה ====== */}
+
+                        {/* White Mode */}
                         <View
                             className={clsx(
                                 styles.swapWrapper,
@@ -131,12 +228,13 @@ export const Dimmer = React.memo((props: IProps) => {
                             <View className={styles.miniBackground} />
                             <White
                                 {...commonProps}
-                                brightness={props.brightness}
-                                temperature={props.temperature}
+                                brightness={brightness}
+                                temperature={temperature}
                                 style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
                             />
                         </View>
 
+                        {/* Colour Mode */}
                         <View
                             className={clsx(
                                 styles.swapWrapper,
@@ -147,8 +245,8 @@ export const Dimmer = React.memo((props: IProps) => {
                             <View className={styles.miniBackground} />
                             <Colour
                                 {...commonProps}
-                                colour={props.colour}
-                                currentLampName={props.deviceName}
+                                colour={safeColour}
+                                currentLampName={deviceName}
                                 style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
                             />
                         </View>
@@ -162,44 +260,10 @@ export const Dimmer = React.memo((props: IProps) => {
                         </View>
 
                         {/* SAVED SCENES DROPDOWN */}
-                        <View className={styles.savedScenesRow}>
-                            <View
-                                className={styles.savedScenesDropdown}
-                                onClick={() => {
-                                    const saved = getStorageSync('custom_scenes') || [];
-                                    if (saved.length === 0) {
-                                        showActionSheet({
-                                            itemList: ['אין מצבים שמורים'],
-                                            success: () => { }
-                                        });
-                                        return;
-                                    }
-                                    showActionSheet({
-                                        itemList: saved.map((s: any) => s.name),
-                                        success: (res) => {
-                                            const selectedScene = saved[res.tapIndex];
-                                            showActionSheet({
-                                                itemList: ['הפעל מצב', 'ערוך מצב'],
-                                                success: (actionRes) => {
-                                                    if (actionRes.tapIndex === 0) {
-                                                        // Activate scene
-                                                        if (selectedScene.data) {
-                                                            onRelease?.(lampSchemaMap.scene_data.code, selectedScene.data);
-                                                        }
-                                                    } else {
-                                                        // Edit scene - placeholder for now
-                                                        console.log('Edit scene:', selectedScene);
-                                                    }
-                                                }
-                                            });
-                                        }
-                                    });
-                                }}
-                            >
-                                <Text className={styles.dropdownText}>מצבים שמורים...</Text>
-                                <View className={styles.dropdownArrow} />
-                            </View>
-                        </View>
+                        <SavedScenesDropdown
+                            onActivateScene={handleActivateScene}
+                            style={{ marginTop: '16rpx', marginBottom: '24rpx' }}
+                        />
 
                         {/* MUSIC SECTION */}
                         {support.isSupportDp(lampSchemaMap.music_data.code) && (

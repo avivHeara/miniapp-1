@@ -1,0 +1,294 @@
+/* SaveSceneButton Styles */
+/* RTL Support + Dark Theme */
+
+/* ============ Save Button Bubble ============ */
+.saveButton {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(calc(-250rpx - 40rpx), calc(360rpx - 40rpx));
+  
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 165, 0, 0.9) 0%, rgba(255, 140, 0, 0.8) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 16rpx rgba(255, 165, 0, 0.4);
+  z-index: 1000;
+  transition: all 0.2s ease;
+}
+
+.saveButton:active {
+  transform: translate(calc(-250rpx - 40rpx), calc(360rpx - 40rpx)) scale(0.9);
+  box-shadow: 0 2rpx 8rpx rgba(255, 165, 0, 0.3);
+}
+
+.saveIcon {
+  font-size: 36rpx;
+}
+
+/* ============ Modal Overlay - Z-INDEX VERY HIGH ============ */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ============ Modal Content ============ */
+.modalContent {
+  width: 620rpx;
+  background: linear-gradient(180deg, #2a2a30 0%, #1a1a1f 100%);
+  border-radius: 24rpx;
+  padding: 32rpx;
+  direction: rtl;
+  border: 1px solid rgba(255, 165, 0, 0.3);
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.25s ease-out;
+  z-index: 9999999;
+  position: relative;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============ Modal Header ============ */
+.modalHeader {
+  text-align: center;
+  margin-bottom: 28rpx;
+}
+
+.modalTitle {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #ffffff;
+  display: block;
+}
+
+.modalSubtitle {
+  font-size: 24rpx;
+  color: rgba(255, 165, 0, 0.7);
+  margin-top: 8rpx;
+  display: block;
+}
+
+/* ============ Input Group ============ */
+.inputGroup {
+  margin-bottom: 24rpx;
+}
+
+.inputLabel {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 12rpx;
+  display: block;
+}
+
+.input {
+  width: 100%;
+  height: 80rpx;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  color: #ffffff;
+  direction: rtl;
+  text-align: right;
+}
+
+.input:focus {
+  border-color: rgba(255, 165, 0, 0.5);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ============ Radio Group ============ */
+.radioGroup {
+  margin-bottom: 24rpx;
+}
+
+.radioLabel {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 14rpx;
+  display: block;
+}
+
+.radioOption {
+  display: flex;
+  align-items: center;
+  padding: 14rpx 18rpx;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12rpx;
+  margin-bottom: 10rpx;
+  transition: all 0.2s ease;
+}
+
+.radioOption:active {
+  background: rgba(255, 165, 0, 0.15);
+}
+
+.radioSelected {
+  background: rgba(255, 165, 0, 0.15);
+  border-color: rgba(255, 165, 0, 0.5);
+}
+
+.radioCircle {
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  margin-left: 14rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radioSelected .radioCircle {
+  border-color: #ff9800;
+}
+
+.radioInner {
+  width: 18rpx;
+  height: 18rpx;
+  border-radius: 50%;
+  background: #ff9800;
+}
+
+.radioText {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ============ Preview - ALL PARAMETERS ============ */
+.preview {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 14rpx;
+  padding: 18rpx 20rpx;
+  margin-bottom: 24rpx;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.previewTitle {
+  font-size: 24rpx;
+  color: rgba(255, 165, 0, 0.9);
+  margin-bottom: 14rpx;
+  display: block;
+  font-weight: 500;
+}
+
+.previewItems {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.previewRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6rpx 0;
+}
+
+.previewLabel {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.previewValue {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+.previewValueActive {
+  font-size: 24rpx;
+  color: #ff9800;
+  font-weight: 600;
+}
+
+.colorPreviewRow {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.colorPreview {
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 8rpx;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* ============ Modal Buttons ============ */
+.modalButtons {
+  display: flex;
+  gap: 18rpx;
+  margin-top: 8rpx;
+}
+
+.cancelButton {
+  flex: 1;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12rpx;
+  transition: all 0.2s ease;
+}
+
+.cancelButton:active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.cancelText {
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.confirmButton {
+  flex: 1;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+  border-radius: 12rpx;
+  transition: all 0.2s ease;
+}
+
+.confirmButton:active {
+  background: linear-gradient(135deg, #f57c00 0%, #e65100 100%);
+  transform: scale(0.98);
+}
+
+.confirmText {
+  font-size: 28rpx;
+  color: #ffffff;
+  font-weight: 600;
+}
