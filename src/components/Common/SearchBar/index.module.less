@@ -1,0 +1,48 @@
+.container {
+    width: 100%;
+    padding: 0 32rpx;
+    margin-bottom: 24rpx;
+    box-sizing: border-box;
+}
+
+.searchWrapper {
+    display: flex;
+    align-items: center;
+    height: 96rpx;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08); // מסגרת עדינה אחת
+    border-radius: 20rpx;
+    padding: 0 24rpx;
+    direction: rtl;
+
+    @supports (backdrop-filter: blur(10px)) {
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(12px);
+    }
+}
+
+.searchIcon {
+    width: 40rpx;
+    height: 40rpx;
+    margin-left: 20rpx;
+    opacity: 0.6;
+}
+
+.input {
+    flex: 1;
+    height: 100%;
+    font-size: 30rpx;
+    color: #fff;
+    text-align: right;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+
+    // תיקון אגרסיבי למסגרות הפנימיות של טויה
+    :global(.ray-input) {
+        border: none !important;
+        background: transparent !important;
+        outline: none !important;
+        box-shadow: none !important;
+    }
+}

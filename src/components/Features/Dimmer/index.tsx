@@ -13,6 +13,7 @@ import { Colour } from './Colour';
 import { CollectColors } from './components/CollectColors';
 import { SavedScenesDropdown } from './components/SavedScenesDropdown';
 import { SaveSceneButton } from './components/SaveSceneButton';
+import { FixedModesLayout } from './components/FixedModesLayout';
 import { SavedScene, SavedDeviceState } from '@/redux/modules/savedScenesSlice';
 
 import styles from './index.module.less';
@@ -47,6 +48,7 @@ interface IProps {
     setScrollEnabled?: (v: boolean) => void;
     deviceName?: string;
     deviceId?: string;
+    searchQuery?: string;
 }
 
 const DEFAULT_COLOUR: IColour = {
@@ -75,6 +77,7 @@ export const Dimmer = React.memo((props: IProps) => {
         onChange,
         onReleaseWhite,
         setScrollEnabled,
+        searchQuery = '',
     } = props;
 
     const safeColour = colour || DEFAULT_COLOUR;
@@ -252,28 +255,9 @@ export const Dimmer = React.memo((props: IProps) => {
                         </View>
                     </>
                 ) : (
-                    <View className={styles.fixedWrapper}>
-                        {/* SCENES SECTION */}
-                        <View className={styles.section}>
-                            <Text className={styles.sectionTitle}>מצבים</Text>
-                            <Scene style={{ width: '100%' }} />
-                        </View>
-
-                        {/* SAVED SCENES DROPDOWN */}
-                        <SavedScenesDropdown
-                            onActivateScene={handleActivateScene}
-                            style={{ marginTop: '16rpx', marginBottom: '24rpx' }}
-                        />
-
-                        {/* MUSIC SECTION */}
-                        {support.isSupportDp(lampSchemaMap.music_data.code) && (
-                            <View className={styles.section}>
-                                <Text className={styles.sectionTitle}>מוזיקה</Text>
-                                <Music style={{ width: '100%' }} />
-                            </View>
-                        )}
-                    </View>
+                    <FixedModesLayout searchQuery={searchQuery} />
                 )}
+
             </View>
         </Box>
     );

@@ -27,6 +27,7 @@ import {
   DeviceSelector,
   BottomNav,
   ModeTabs,
+  SearchBar,
 } from '@/components';
 import { Dimmer } from '@/components/Features/Dimmer';
 import { TimerFeature as TimerContent } from '@/components/Features/TimerFeature';
@@ -84,6 +85,7 @@ export function Home(props: Props) {
   }, [selectedDeviceKey, devName1, devName2, devName3]);
 
   const [activeNavTab, setActiveNavTab] = useState<NavTab>('lights');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [activeLightMode, setActiveLightMode] = useState<LightMode>(() => {
     if (['white', 'colour', 'scene'].includes(workMode)) {
@@ -207,8 +209,16 @@ export function Home(props: Props) {
       {/* ===== SPACER - דוחף את DeviceSelector למטה - מוקטן לשיפור מיקום המנורות ===== */}
       <View style={{ height: '80rpx' }} />
 
-      {/* ===== DEVICE SELECTOR ===== */}
-      <DeviceSelector onEditPress={goToDevices} />
+      {/* ===== HEADER AREA: SEARCH OR DEVICE SELECTOR ===== */}
+      {activeLightMode === 'scene' || activeNavTab === 'music' ? (
+        <SearchBar
+          value={searchQuery}
+          onChange={setSearchQuery}
+          style={{ marginTop: '20rpx' }}
+        />
+      ) : (
+        <DeviceSelector onEditPress={goToDevices} />
+      )}
 
       {/* ===== MODE TABS ===== */}
       {activeNavTab === 'lights' && (
@@ -232,7 +242,7 @@ export function Home(props: Props) {
             })}
           >
             <Dimmer
-              contentClassName={clsx(!power && styles.disabled)}
+              contentClassName={clsx((activeLightMode !== 'scene' && !power) && styles.disabled)}
               setScrollEnabled={setScrollEnabled}
               showTitle={false}
               hideTabs={true}
@@ -246,6 +256,7 @@ export function Home(props: Props) {
               onRelease={handleRelease}
               onReleaseWhite={handleReleaseWhite}
               deviceName={currentDeviceName}
+              searchQuery={searchQuery}
             />
           </View>
 
@@ -283,12 +294,13 @@ export function Home(props: Props) {
           {activeNavTab === 'timer' && (
             <View className={styles.extraBtnWrapper} onClick={goToTimersPage}>
               <View className={styles.timerBtn}>
-                <Text className={styles.timerIcon}>⚙️</Text>
+                <Text className={styles.timerIcon} style={{ fontSize: '32rpx' }}>⚙️</Text>
               </View>
               <Text className={styles.timerLabel}>הגדרות מתקדמות לטיימר</Text>
             </View>
           )}
-          <PowerButton />
+          {/* Show Power Button only in Adjustment modes (White/Colour) */}
+          {(activeNavTab === 'lights' && activeLightMode !== 'scene') && <PowerButton />}
         </View>
       )}
     </View>

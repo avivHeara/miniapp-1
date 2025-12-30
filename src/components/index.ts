@@ -15,3 +15,4 @@ export { DeviceSelector } from './Common/DeviceSelector';
 export { ModeTabs } from './Common/ModeTabs';
 export type { LightMode } from './Common/ModeTabs';
 export { PowerButton } from './Common/PowerButton';
+export { SearchBar } from './Common/SearchBar';

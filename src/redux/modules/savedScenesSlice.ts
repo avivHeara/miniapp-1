@@ -1,6 +1,6 @@
 /**
  * Saved Scenes Redux Slice
- * ניהול מצבים שמורים עם LocalStorage
+ * ניהול מצבים שמורים עם LocalStorage ומצבי ברירת מחדל
  */
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -27,6 +27,9 @@ export interface SavedScene {
   createdAt: number;
   isMultiDevice: boolean;
   devices: SavedDeviceState[];
+  isFavorite?: boolean;    // האם מופיע במועדפים
+  customImage?: string;   // נתיב לתמונה מקומית או URL
+  category?: 'scene' | 'music'; // קטגוריה
 }
 
 interface SavedScenesState {
@@ -36,7 +39,50 @@ interface SavedScenesState {
 // ========== Constants ==========
 
 const STORAGE_KEY = 'saved_custom_scenes';
-const MAX_SCENES = 6;
+const MAX_SCENES = 12; // הגדלנו לטובת הדוגמאות
+
+const DEFAULT_SCENES: SavedScene[] = [
+  {
+    id: 'mock-1',
+    name: 'ערב רומנטי',
+    createdAt: Date.now(),
+    isMultiDevice: true,
+    category: 'scene',
+    isFavorite: true,
+    customImage: '/romantic.png',
+    devices: []
+  },
+  {
+    id: 'mock-2',
+    name: 'קריאה וריכוז',
+    createdAt: Date.now(),
+    isMultiDevice: false,
+    category: 'scene',
+    isFavorite: false,
+    customImage: '/reading.png',
+    devices: []
+  },
+  {
+    id: 'mock-3',
+    name: 'מסיבת ריקודים',
+    createdAt: Date.now(),
+    isMultiDevice: true,
+    category: 'music',
+    isFavorite: true,
+    customImage: '/party.png',
+    devices: []
+  },
+  {
+    id: 'mock-4',
+    name: 'מנוחה בצהריים',
+    createdAt: Date.now(),
+    isMultiDevice: false,
+    category: 'scene',
+    isFavorite: false,
+    customImage: '/leisure.png',
+    devices: []
+  }
+];
 
 // ========== Helpers ==========
 
@@ -47,16 +93,22 @@ const generateId = (): string => {
 const loadFromStorage = (): SavedScene[] => {
   try {
     const data = getStorageSync({ key: STORAGE_KEY });
+    let stored: SavedScene[] = [];
     if (data && typeof data === 'string') {
       const parsed = JSON.parse(data);
       if (Array.isArray(parsed)) {
-        return parsed;
+        stored = parsed;
       }
     }
+
+    // מיזוג של מה ששמור עם הדפולטים (אם לא קיימים)
+    const storedIds = new Set(stored.map(s => s.id));
+    return [...stored, ...DEFAULT_SCENES.filter(s => !storedIds.has(s.id))];
+
   } catch (error) {
     console.error('Failed to load saved scenes:', error);
+    return DEFAULT_SCENES;
   }
-  return [];
 };
 
 const saveToStorage = (scenes: SavedScene[]): void => {
@@ -65,7 +117,6 @@ const saveToStorage = (scenes: SavedScene[]): void => {
       key: STORAGE_KEY,
       data: JSON.stringify(scenes),
     });
-    console.log('💾 Saved scenes to storage:', scenes.length);
   } catch (error) {
     console.error('Failed to save scenes:', error);
   }
@@ -83,72 +134,46 @@ const savedScenesSlice = createSlice({
   name: 'savedScenes',
   initialState,
   reducers: {
-    // טעינה מ-LocalStorage
     loadScenes: (state) => {
       state.scenes = loadFromStorage();
     },
-
-    // הוספת מצב חדש
     addScene: (state, action: PayloadAction<Omit<SavedScene, 'id' | 'createdAt'>>) => {
-      if (state.scenes.length >= MAX_SCENES) {
-        console.warn('Maximum scenes reached');
-        return;
-      }
-
+      if (state.scenes.length >= MAX_SCENES) return;
       const newScene: SavedScene = {
         ...action.payload,
         id: generateId(),
         createdAt: Date.now(),
       };
-
-      state.scenes.unshift(newScene); // הוסף בהתחלה
+      state.scenes.unshift(newScene);
       saveToStorage(state.scenes);
-
-      console.log('✅ Scene added:', newScene.name, newScene);
     },
-
-    // עדכון מצב קיים (שם או נתונים)
     updateScene: (state, action: PayloadAction<{ id: string; updates: Partial<SavedScene> }>) => {
       const { id, updates } = action.payload;
       const index = state.scenes.findIndex(s => s.id === id);
-
       if (index !== -1) {
-        state.scenes[index] = {
-          ...state.scenes[index],
-          ...updates,
-        };
+        state.scenes[index] = { ...state.scenes[index], ...updates };
         saveToStorage(state.scenes);
-        console.log('✅ Scene updated:', state.scenes[index].name);
       }
     },
-
-    // מחיקת מצב
     deleteScene: (state, action: PayloadAction<string>) => {
       const index = state.scenes.findIndex(s => s.id === action.payload);
       if (index !== -1) {
-        const deleted = state.scenes.splice(index, 1)[0];
+        state.scenes.splice(index, 1);
         saveToStorage(state.scenes);
-        console.log('🗑️ Scene deleted:', deleted.name);
       }
     },
-
-    // שינוי סדר
     reorderScenes: (state, action: PayloadAction<SavedScene[]>) => {
       state.scenes = action.payload;
       saveToStorage(state.scenes);
     },
-
-    // ניקוי כל המצבים
     clearAllScenes: (state) => {
       state.scenes = [];
       saveToStorage([]);
-      console.log('🗑️ All scenes cleared');
     },
   },
 });
 
 // ========== Actions ==========
-
 export const {
   loadScenes,
   addScene,
@@ -159,7 +184,6 @@ export const {
 } = savedScenesSlice.actions;
 
 // ========== Selectors ==========
-
 type RootState = {
   savedScenes?: SavedScenesState;
   [key: string]: any;
@@ -176,7 +200,5 @@ export const selectScenesCount = (state: RootState): number =>
 
 export const selectSceneById = (state: RootState, id: string): SavedScene | undefined =>
   state.savedScenes?.scenes?.find(s => s.id === id);
-
-// ========== Export ==========
 
 export default savedScenesSlice.reducer;
