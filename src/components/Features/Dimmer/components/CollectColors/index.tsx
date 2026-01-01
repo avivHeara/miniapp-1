@@ -160,7 +160,7 @@ export const CollectColors = (props: IProps) => {
         <View className={styles.row} style={style}>
             {isAddEnabled && (
                 <Button
-                    img="/images/add_icon.png"
+                    img="/images/icon/add_icon.png"
                     imgClassName={styles.icon}
                     className={clsx(styles.button, styles.add)}
                     style={addStyle}
@@ -209,7 +209,7 @@ export const CollectColors = (props: IProps) => {
                                 />
                                 {index + 1 > MIN_LENGTH && isActive && (
                                     <Button
-                                        img="/images/delete_icon.png"
+                                        img="/images/icon/delete_icon.png"
                                         imgClassName={styles.deleteIcon}
                                         className={clsx(styles.button, styles.noBg)}
                                         onClick={() => handleDeleteColor(item)}

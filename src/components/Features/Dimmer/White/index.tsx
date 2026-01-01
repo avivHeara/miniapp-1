@@ -31,32 +31,53 @@ export const White = (props: IProps) => {
     const brightness = isUndefined(props.brightness) ? brightnessDp : props.brightness;
     const temperature = isUndefined(props.temperature) ? temperatureDp : props.temperature;
 
+    const [localBrightness, setLocalBrightness] = React.useState(brightness);
+    const [localTemperature, setLocalTemperature] = React.useState(temperature);
     const isTouching = React.useRef(false);
+
+    // Sync local state when props change, but only if not currently touching
+    React.useEffect(() => {
+        if (!isTouching.current) {
+            setLocalBrightness(brightness);
+            setLocalTemperature(temperature);
+        }
+    }, [brightness, temperature]);
 
     const handleTouchStart = React.useCallback(() => {
         isTouching.current = true;
     }, []);
 
-    const handleChange = useThrottleFn(
-        (key, value) => {
-            if (isTouching.current) setScrollEnabled?.(false);
-            if (key === 'temp') onChange?.(false, { temperature: value, brightness });
-            else onChange?.(false, { temperature, brightness: value });
+    // Throttle only the external communication
+    const throttledOnChange = useThrottleFn(
+        (isColor, data) => {
+            onChange?.(isColor, data);
         },
-        { wait: 16 }
+        { wait: 200 }
     ).run;
 
-    const handleWhiteRelease = useThrottleFn(
-        (code, value) => {
-            isTouching.current = false;
-            setScrollEnabled?.(true);
-            onRelease?.(code, value);
-        },
-        { wait: 16 }
-    ).run;
+    const handleChange = (key: 'temp' | 'bright', value: number) => {
+        if (isTouching.current) setScrollEnabled?.(false);
 
-    const temperaturePercent = Math.round(utils.calcPosition(temperature, 0, 1000, 0, 100));
-    const brightnessPercent = Math.round(utils.calcPosition(brightness, 10, 1000, 1, 100));
+        if (key === 'temp') {
+            setLocalTemperature(value);
+            throttledOnChange(false, { temperature: value, brightness: localBrightness });
+        } else {
+            setLocalBrightness(value);
+            throttledOnChange(false, { temperature: localTemperature, brightness: value });
+        }
+    };
+
+    const handleWhiteRelease = (code: string, value: number) => {
+        isTouching.current = false;
+        setScrollEnabled?.(true);
+        // Important: Update local state one last time and send final value immediately
+        if (code === bright_value.code) setLocalBrightness(value);
+        if (code === temp_value.code) setLocalTemperature(value);
+        onRelease?.(code, value);
+    };
+
+    const temperaturePercent = Math.round(utils.calcPosition(localTemperature, 0, 1000, 0, 100));
+    const brightnessPercent = Math.round(utils.calcPosition(localBrightness, 10, 1000, 1, 100));
 
     const temperatureKelvin = Math.round(2700 + (temperaturePercent / 100) * (6500 - 2700));
 
@@ -90,16 +111,11 @@ export const White = (props: IProps) => {
                         <Text className={styles.label}>{Strings.getLang('brightness')}</Text>
                         <Text className={styles.value}>{brightnessPercent}%</Text>
                     </View>
-                    <View
-                        className={styles.brightnessWrapper}
-                        style={{
-                            '--progress': `${brightnessPercent}%`,
-                        } as React.CSSProperties}
-                    >
+                    <View className={styles.brightnessWrapper}>
                         <View className={styles.sliderContent}>
                             {/* @ts-ignore */}
                             <LampBrightSlider
-                                value={brightness}
+                                value={localBrightness}
                                 trackStyle={trackStyle}
                                 thumbStyle={thumbStyle}
                                 onTouchStart={handleTouchStart}
@@ -119,16 +135,11 @@ export const White = (props: IProps) => {
                             {temperatureKelvin}K - {getTempLabel()}
                         </Text>
                     </View>
-                    <View
-                        className={styles.temperatureWrapper}
-                        style={{
-                            '--progress': `${temperaturePercent}%`,
-                        } as React.CSSProperties}
-                    >
+                    <View className={styles.temperatureWrapper}>
                         <View className={styles.sliderContent}>
                             {/* @ts-ignore */}
                             <LampTempSlider
-                                value={temperature}
+                                value={localTemperature}
                                 trackStyle={trackStyle}
                                 thumbStyle={thumbStyle}
                                 onTouchStart={handleTouchStart}

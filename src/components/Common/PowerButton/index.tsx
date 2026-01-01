@@ -6,23 +6,40 @@ import styles from './index.module.less';
 
 export const PowerButton = () => {
     const actions = useActions();
-    const isOn = useProps((props) => props.switch_led ?? false);
+    const hardwareIsOn = useProps((props) => props.switch_led ?? false);
+    const [localIsOn, setLocalIsOn] = React.useState(hardwareIsOn);
     const [isPressed, setIsPressed] = React.useState(false);
+    const isToggling = React.useRef(false);
+
+    // Sync local state when hardware state changes, unless we are currently toggling
+    React.useEffect(() => {
+        if (!isToggling.current) {
+            setLocalIsOn(hardwareIsOn);
+        }
+    }, [hardwareIsOn]);
 
     const handleClick = React.useCallback(
         (e) => {
-            console.log('⚡ PowerButton Pressed! Current state:', isOn);
-            // In Ray, stopPropagation is often under origin
+            const newState = !localIsOn;
+            console.log('⚡ PowerButton Pressed! Optimistic update to:', newState);
+
             if (e?.origin?.stopPropagation) e.origin.stopPropagation();
             else if (e?.stopPropagation) e.stopPropagation();
 
             if (actions.switch_led) {
-                actions.switch_led.set(!isOn, { checkRepeat: false });
+                isToggling.current = true;
+                setLocalIsOn(newState);
+                actions.switch_led.set(newState, { checkRepeat: false });
+
+                // Allow hardware sync after a delay to account for network latency
+                setTimeout(() => {
+                    isToggling.current = false;
+                }, 1000);
             } else {
                 console.error('❌ switch_led action not found!');
             }
         },
-        [actions, isOn]
+        [actions, localIsOn]
     );
 
     const handleTouchStart = React.useCallback(() => {
@@ -40,7 +57,7 @@ export const PowerButton = () => {
             <View
                 className={clsx(
                     styles.powerBox,
-                    isOn ? styles.powerOn : styles.powerOff,
+                    localIsOn ? styles.powerOn : styles.powerOff,
                     { [styles.touching]: isPressed }
                 )}
                 style={{ pointerEvents: 'auto' }}
@@ -50,7 +67,7 @@ export const PowerButton = () => {
                 onTap={handleClick}
                 onClick={handleClick}
             >
-                <Image src="/images/power.png" className={styles.powerBtn} />
+                <Image src="/images/icon/power.png" className={styles.powerBtn} />
             </View>
         </View>
     );

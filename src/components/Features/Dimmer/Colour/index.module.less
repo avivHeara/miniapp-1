@@ -28,12 +28,19 @@
             #0000ff 240deg,
             #ff00ff 300deg,
             #ff0000 360deg);
-    filter: blur(40rpx);
+    filter: blur(20rpx);
     z-index: 1;
     opacity: 0.8;
     pointer-events: none;
     -webkit-mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 70%);
     mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 70%);
+
+    &.small {
+        filter: blur(25rpx);
+        opacity: 0.6;
+        -webkit-mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 65%);
+        mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 65%);
+    }
 }
 
 .marker {

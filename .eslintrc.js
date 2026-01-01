@@ -1,6 +1,7 @@
 module.exports = {
   extends: ['tuya-panel'],
   rules: {
+    'no-console': 'off',
     camelcase: 0,
     'react/require-default-props': 0,
     '@typescript-eslint/ban-ts-comment': 0,

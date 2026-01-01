@@ -204,7 +204,12 @@ export const SceneEditor: React.FC<Props> = ({ sceneId, onClose, onRelease, onRe
                                             saturation: currentDeviceState.saturation || 0,
                                             value: currentDeviceState.value || 0
                                         }}
-                                        onRelease={(code, val) => updateCurrentDevice({ hue: val.hue, saturation: val.saturation, value: val.value })}
+                                        onRelease={(code, val) => {
+                                            // Identify which device was actually changed if possible, 
+                                            // but for now, the Colour component handles the active lamp.
+                                            // The Colour component's onRelease might be called for markers.
+                                            updateCurrentDevice({ hue: val.hue, saturation: val.saturation, value: val.value });
+                                        }}
                                         onChange={(isColor, val) => updateCurrentDevice({ hue: val.hue, saturation: val.saturation, value: val.value })}
                                     />
                                 )}

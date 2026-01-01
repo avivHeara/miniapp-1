@@ -96,13 +96,22 @@ export function Home(props: Props) {
 
   // Local state for colour data to "neutralize" DP interaction
   const [localColour, setLocalColour] = useState(colour);
+  const [localBrightness, setLocalBrightness] = useState(brightness);
+  const [localTemperature, setLocalTemperature] = useState(temperature);
+  const isInteracting = React.useRef(false);
 
-  // Sync local state when DP updates (optional, keeping it here for initial load correct value)
+  // Sync local state when DP updates
   useEffect(() => {
-    if (colour) setLocalColour(colour);
-  }, []); // Only on mount/change, actually if we want to "detach", maybe once is enough. 
-  // If we want to support external updates later, we'd add [colour] dependency.
-  // For now, let's keep it detached after mount so user local changes persist even if DP doesn't update.
+    if (colour && !isInteracting.current) setLocalColour(colour);
+  }, [colour]);
+
+  useEffect(() => {
+    if (brightness !== undefined && !isInteracting.current) setLocalBrightness(brightness);
+  }, [brightness]);
+
+  useEffect(() => {
+    if (temperature !== undefined && !isInteracting.current) setLocalTemperature(temperature);
+  }, [temperature]);
 
   // ========================================
   // Navigation Functions
@@ -169,31 +178,38 @@ export function Home(props: Props) {
 
   const handleColorChange = (isColour: boolean, data: any) => {
     if (!support.isSupportDp(control_data.code)) return;
+    isInteracting.current = true;
     let controlData = { hue: 0, saturation: 0, value: 0, bright: 0, temp: 0 };
     if (isColour) {
       const { hue, saturation, value } = data;
       controlData = { hue, saturation, value, bright: 0, temp: 0 };
-      setLocalColour({ ...localColour, hue, saturation, value });
+      setLocalColour({ hue, saturation, value }); // Instant local update
     } else {
       const { brightness: bright, temperature: temp } = data;
       controlData = { hue: 0, saturation: 0, value: 0, bright, temp };
+      setLocalBrightness(bright); // Instant local update
+      setLocalTemperature(temp); // Instant local update
     }
-    // Reliable publish using SDM
-    devices.lamp.publishDps({ control_data: controlData }, { throttle: 50 });
+    // Network update remains throttled to avoid congestion
+    devices.lamp.publishDps({ control_data: controlData }, { throttle: 200 });
   };
 
   const handleRelease = (code: string, value: any) => {
+    isInteracting.current = false;
     if (code === colour_data.code) {
       // Local update for release
       setLocalColour({ ...localColour, ...value });
     }
     // Reliable DP call via SDM instance
-    devices.lamp.publishDps({ [code]: value }, { throttle: 50, immediate: true });
+    devices.lamp.publishDps({ [code]: value }, { throttle: 200, immediate: true });
   };
 
   const handleReleaseWhite = (value: any) => {
+    isInteracting.current = false;
+    if (value.bright_value !== undefined) setLocalBrightness(value.bright_value);
+    if (value.temp_value !== undefined) setLocalTemperature(value.temp_value);
     // Correctly publish multiple DPS for white mode
-    devices.lamp.publishDps(value, { throttle: 50 });
+    devices.lamp.publishDps(value, { throttle: 200 });
   };
 
   // ========================================
@@ -245,8 +261,8 @@ export function Home(props: Props) {
               hideCollectColors={true}
               mode={activeLightMode as any}
               colour={localColour}
-              brightness={brightness}
-              temperature={temperature}
+              brightness={localBrightness}
+              temperature={localTemperature}
               onModeChange={handleLightModeChange}
               onChange={handleColorChange}
               onRelease={handleRelease}

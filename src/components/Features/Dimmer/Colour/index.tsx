@@ -4,6 +4,7 @@ import { View, Text } from '@ray-js/ray';
 import clsx from 'clsx';
 import { useSupport } from '@ray-js/panel-sdk';
 import { LampCirclePickerColor } from '@ray-js/components-ty-lamp';
+import { useThrottleFn } from 'ahooks';
 
 import { lampSchemaMap } from '@/devices/schema';
 import styles from './index.module.less';
@@ -139,8 +140,24 @@ export const Colour = (props: IProps) => {
         }
     };
 
+    const throttledOnChange = useThrottleFn(
+        (v: { h: number; s: number }, targetId: string) => {
+            onChange?.(true, { hue: v.h, saturation: v.s, value: 1000 });
+        },
+        { wait: 200 }
+    ).run;
+
     const handleWheelMove = (v: { h: number; s: number }) => {
-        handleWheelDataChange(v, false);
+        const targetId = activeLampId;
+        setDraggingId(targetId);
+
+        // Immediate visual update
+        setLamps(prev => prev.map(l => {
+            if (l.id === targetId) return { ...l, hue: v.h, saturation: v.s };
+            return l;
+        }));
+
+        throttledOnChange(v, targetId);
         if (setScrollEnabled) setScrollEnabled(false);
     };
     const handleWheelEnd = (v: { h: number; s: number }) => {
@@ -169,6 +186,13 @@ export const Colour = (props: IProps) => {
         if (setScrollEnabled) setScrollEnabled(false);
     };
 
+    const throttledMarkerOnChange = useThrottleFn(
+        (h: number, s: number) => {
+            onChange?.(true, { hue: h, saturation: s, value: 1000 });
+        },
+        { wait: 200 }
+    ).run;
+
     const handleMarkerTouchMove = (e: any) => {
         if (!dragStartRef.current) return;
         const { id, startX, startY, initialPos } = dragStartRef.current;
@@ -182,12 +206,13 @@ export const Colour = (props: IProps) => {
 
         const { h, s } = getHSFromPos(newX, newY);
 
+        // Immediate visual update
         setLamps(prev => prev.map(l => {
-            if (l.id === id) {
-                return { ...l, hue: h, saturation: s };
-            }
+            if (l.id === id) return { ...l, hue: h, saturation: s };
             return l;
         }));
+
+        throttledMarkerOnChange(h, s);
     };
 
     const handleMarkerTouchEnd = (id: string) => () => {

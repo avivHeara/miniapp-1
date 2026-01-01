@@ -320,7 +320,13 @@ export const Dimmer = React.memo((props: IProps) => {
                                 {...commonProps}
                                 brightness={brightness}
                                 temperature={temperature}
-                                style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+                                style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    pointerEvents: mode === 'white' ? 'auto' : 'none'
+                                }}
                             />
                         </View>
 
@@ -338,7 +344,12 @@ export const Dimmer = React.memo((props: IProps) => {
                                 colour={safeColour}
                                 currentLampName={deviceName}
                                 allDevices={allDevices}
-                                style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
+                                style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    pointerEvents: mode === 'colour' ? 'auto' : 'none'
+                                }}
                             />
                         </View>
                     </>

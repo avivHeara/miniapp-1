@@ -14,9 +14,10 @@
     "build:tuya": "ray build -t tuya"
   },
   "dependencies": {
+    "@ray-js/components": "1.7.36",
     "@ray-js/components-ty-lamp": "^2.0.4",
-    "@ray-js/panel-sdk": "^1.14.1",
-    "@ray-js/ray": "^1.7.55",
+    "@ray-js/panel-sdk": "^1.15.0",
+    "@ray-js/ray": "1.7.50",
     "@ray-js/ray-error-catch": "^0.0.26",
     "@ray-js/smart-ui": "^2.7.3",
     "@reduxjs/toolkit": "^2.10.1",

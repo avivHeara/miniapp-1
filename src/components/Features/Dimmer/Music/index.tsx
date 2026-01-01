@@ -75,7 +75,7 @@ export const Music: React.FC<Props> = ({ style }) => {
                 };
                 return {
                     id: index,
-                    icon: `/images/music_${item}.png`,
+                    icon: `/images/icon/${item}.png`,
                     title: musicNameMap[item] || item,
                 };
             }),
