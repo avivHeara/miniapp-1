@@ -1,0 +1,230 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(15rpx);
+    -webkit-backdrop-filter: blur(15rpx);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal {
+    width: 90%;
+    max-height: 85vh;
+    background: rgba(25, 25, 35, 0.85);
+    border: 1px solid rgba(50, 229, 255, 0.3);
+    border-radius: 48rpx;
+    padding: 40rpx;
+    display: flex;
+    flex-direction: column;
+    gap: 32rpx;
+    box-shadow: 0 32rpx 64rpx rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow-y: auto;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50rpx);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    direction: rtl;
+}
+
+.titleGroup {
+    display: flex;
+    align-items: center;
+    gap: 16rpx;
+}
+
+.sceneName {
+    font-size: 36rpx;
+    font-weight: 800;
+    color: #fff;
+}
+
+.editNameBtn {
+    font-size: 32rpx;
+    opacity: 0.6;
+}
+
+.closeBtn {
+    width: 60rpx;
+    height: 60rpx;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 40rpx;
+}
+
+/* Device Selector */
+.deviceSelector {
+    display: flex;
+    flex-direction: column;
+    gap: 16rpx;
+    direction: rtl;
+}
+
+.label {
+    font-size: 24rpx;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 600;
+}
+
+.devicePills {
+    display: flex;
+    gap: 16rpx;
+    flex-wrap: wrap;
+}
+
+.pill {
+    padding: 16rpx 32rpx;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24rpx;
+    display: flex;
+    align-items: center;
+    gap: 12rpx;
+    transition: all 0.2s;
+}
+
+.pillActive {
+    background: rgba(50, 229, 255, 0.15);
+    border-color: rgba(50, 229, 255, 0.4);
+}
+
+.pillText {
+    font-size: 26rpx;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.pillActive .pillText {
+    color: #32e5ff;
+    font-weight: 600;
+}
+
+.checkIcon {
+    font-size: 24rpx;
+    color: #32e5ff;
+}
+
+/* Mode Switcher */
+.modeSwitcher {
+    display: flex;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 8rpx;
+    border-radius: 24rpx;
+    margin: 16rpx 0;
+}
+
+.modeTab {
+    flex: 1;
+    height: 72rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 16rpx;
+    transition: all 0.2s;
+}
+
+.modeTabActive {
+    background: #32e5ff;
+}
+
+.tabText {
+    font-size: 24rpx;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.modeTabActive .tabText {
+    color: #000;
+}
+
+/* Controls Area */
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 40rpx;
+    padding: 20rpx 0;
+}
+
+/* Color Picker Container */
+.colorPickerWrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 20rpx 0;
+}
+
+/* Footer Buttons */
+.footer {
+    display: flex;
+    gap: 20rpx;
+    margin-top: 20rpx;
+}
+
+.saveBtn {
+    flex: 2;
+    height: 100rpx;
+    background: linear-gradient(135deg, #32e5ff 0%, #00b4d8 100%);
+    border-radius: 24rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 16rpx 32rpx rgba(0, 180, 216, 0.3);
+}
+
+.cancelBtn {
+    flex: 1;
+    height: 100rpx;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btnTextMain {
+    font-size: 30rpx;
+    font-weight: 700;
+    color: #000;
+}
+
+.btnTextSec {
+    font-size: 30rpx;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+}

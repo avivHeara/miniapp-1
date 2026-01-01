@@ -140,3 +140,103 @@
     flex-direction: column;
     align-items: center;
 }
+
+/* ===== Edit Mode Banner (Glassmorphism) ===== */
+.editBanner {
+    width: 92%;
+    background: rgba(50, 229, 255, 0.12);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(50, 229, 255, 0.35);
+    border-radius: 32rpx;
+    padding: 28rpx 32rpx;
+    margin: 20rpx auto 32rpx;
+    display: flex;
+    flex-direction: column;
+    gap: 24rpx;
+    box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.4);
+    animation: bannerSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 99;
+}
+
+@keyframes bannerSlideIn {
+    from {
+        transform: translateY(-20rpx);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.editInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16rpx;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12rpx 20rpx;
+    border-radius: 20rpx;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    direction: rtl;
+}
+
+.editLabel {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 26rpx;
+    font-weight: 500;
+}
+
+.editName {
+    color: #32e5ff;
+    font-size: 32rpx;
+    font-weight: 800;
+    text-shadow: 0 0 15rpx rgba(50, 229, 255, 0.4);
+}
+
+.editIcon {
+    font-size: 28rpx;
+}
+
+.editActions {
+    display: flex;
+    gap: 20rpx;
+    justify-content: center;
+    width: 100%;
+}
+
+.cancelBtn,
+.saveBtn {
+    flex: 1;
+    height: 84rpx;
+    border-radius: 20rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-weight: 700;
+}
+
+.cancelBtn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.82);
+}
+
+.saveBtn {
+    background: linear-gradient(135deg, #32e5ff 0%, #00b4d8 100%);
+    box-shadow: 0 4rpx 20rpx rgba(0, 180, 216, 0.4);
+    color: #000;
+}
+
+.btnText {
+    font-size: 28rpx;
+}
+
+.saveBtn:active,
+.cancelBtn:active {
+    transform: scale(0.97);
+    opacity: 0.9;
+}

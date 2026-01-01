@@ -7,14 +7,14 @@ import Strings from '@/i18n';
 import { ModeTabs, type MetaMode } from '@/components/Common/ModeTabs';
 import { Box } from '@/components/Base/Box';
 import { Scene } from './Scene';
-import { Music } from './Music';
 import { White } from './White';
 import { Colour } from './Colour';
 import { CollectColors } from './components/CollectColors';
-import { SavedScenesDropdown } from './components/SavedScenesDropdown';
 import { SaveSceneButton } from './components/SaveSceneButton';
 import { FixedModesLayout } from './components/FixedModesLayout';
-import { SavedScene, SavedDeviceState } from '@/redux/modules/savedScenesSlice';
+import { SceneEditor } from './components/SceneEditor';
+import { SavedScene, SavedDeviceState, setEditingScene, updateScene, selectEditingSceneId, selectSavedScenes } from '@/redux/modules/savedScenesSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 import styles from './index.module.less';
 
@@ -79,6 +79,13 @@ export const Dimmer = React.memo((props: IProps) => {
         setScrollEnabled,
         searchQuery = '',
     } = props;
+
+    const dispatch = useDispatch();
+    const editingSceneId = useSelector(selectEditingSceneId);
+    const allScenes = useSelector(selectSavedScenes);
+    const editingScene = React.useMemo(() =>
+        allScenes.find(s => s.id === editingSceneId),
+        [allScenes, editingSceneId]);
 
     const safeColour = colour || DEFAULT_COLOUR;
 
@@ -179,6 +186,57 @@ export const Dimmer = React.memo((props: IProps) => {
         }
     }, [selectedDeviceKey, actions, onRelease, onReleaseWhite, onModeChange]);
 
+    const handleCancelEdit = () => {
+        dispatch(setEditingScene(null));
+        showToast({ title: 'עריכה בוטלה', icon: 'none' });
+    };
+
+    const handleSaveEdit = () => {
+        if (!editingSceneId) return;
+
+        // יצירת מבנה המכשיר המעודכן
+        const updatedDevice: SavedDeviceState = {
+            deviceId: selectedDeviceKey,
+            deviceName: currentDevice.deviceName,
+            mode: mode as 'white' | 'colour',
+            ...(mode === 'white' ? {
+                brightness: brightness,
+                temperature: temperature
+            } : {
+                hue: safeColour.hue,
+                saturation: safeColour.saturation,
+                value: safeColour.value
+            })
+        };
+
+        dispatch(updateScene({
+            id: editingSceneId,
+            updates: {
+                devices: [updatedDevice]
+            }
+        }));
+
+        dispatch(setEditingScene(null));
+        showToast({ title: 'השינויים נשמרו', icon: 'success' });
+    };
+
+    const handleRenameEdit = () => {
+        if (!editingScene) return;
+        showRayModal({
+            title: 'עריכת שם המצב',
+            editable: true,
+            placeholderText: 'הזן שם...',
+            cancelText: 'ביטול',
+            confirmText: 'אישור',
+            content: editingScene.name,
+            success: (res) => {
+                if (res.confirm && res.content?.trim()) {
+                    dispatch(updateScene({ id: editingSceneId, updates: { name: res.content.trim() } }));
+                }
+            }
+        });
+    };
+
     // ========== End Saved Scenes ==========
 
     const commonProps = { onChange, onRelease, setScrollEnabled };
@@ -190,11 +248,39 @@ export const Dimmer = React.memo((props: IProps) => {
             contentClassName={clsx(styles.boxContent || '', contentClassName || '')}
             title={showTitle ? Strings.getLang('dimming') : ''}
         >
+            {/* Isolated Scene Editor Overlay */}
+            {editingSceneId && (
+                <SceneEditor
+                    sceneId={editingSceneId}
+                    onClose={() => dispatch(setEditingScene(null))}
+                    onRelease={onRelease}
+                    onReleaseWhite={onReleaseWhite}
+                />
+            )}
+
             {!hideTabs && (
                 <ModeTabs
                     activeMode={mode}
                     onChange={handleTabChange}
                 />
+            )}
+
+            {editingSceneId && (
+                <View className={styles.editBanner}>
+                    <View className={styles.editInfo} onClick={handleRenameEdit}>
+                        <Text className={styles.editLabel}>עורך מצב:</Text>
+                        <Text className={styles.editName}>{editingScene?.name || 'טוען...'}</Text>
+                        <Text className={styles.editIcon}>✏️</Text>
+                    </View>
+                    <View className={styles.editActions}>
+                        <View className={styles.cancelBtn} onClick={handleCancelEdit}>
+                            <Text className={styles.btnText}>ביטול</Text>
+                        </View>
+                        <View className={styles.saveBtn} onClick={handleSaveEdit}>
+                            <Text className={styles.btnText}>שמור שינויים</Text>
+                        </View>
+                    </View>
+                </View>
             )}
 
             {!hideCollectColors && activeMetaMode === ADJUSTMENT_TAB && (
@@ -255,7 +341,12 @@ export const Dimmer = React.memo((props: IProps) => {
                         </View>
                     </>
                 ) : (
-                    <FixedModesLayout searchQuery={searchQuery} />
+                    <FixedModesLayout
+                        searchQuery={searchQuery}
+                        onRelease={onRelease}
+                        onReleaseWhite={onReleaseWhite}
+                        onModeChange={onModeChange}
+                    />
                 )}
 
             </View>

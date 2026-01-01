@@ -173,26 +173,22 @@ export function Home(props: Props) {
     if (isColour) {
       const { hue, saturation, value } = data;
       controlData = { hue, saturation, value, bright: 0, temp: 0 };
-      // Local update for dragging
       setLocalColour({ ...localColour, hue, saturation, value });
     } else {
       const { brightness: bright, temperature: temp } = data;
       controlData = { hue: 0, saturation: 0, value: 0, bright, temp };
     }
-    // RESTORED DP CALL
-    dpStructuredActions.control_data.set(controlData, { throttle: 50 });
+    // Reliable publish using SDM
+    devices.lamp.publishDps({ control_data: controlData }, { throttle: 50 });
   };
 
   const handleRelease = (code: string, value: any) => {
     if (code === colour_data.code) {
       // Local update for release
       setLocalColour({ ...localColour, ...value });
-      // RESTORED DP CALL
-      dpStructuredActions[code].set(value, { throttle: 50, immediate: true });
-    } else {
-      // RESTORED DP CALL
-      dpActions[code].set(value, { throttle: 50 });
     }
+    // Reliable DP call via SDM instance
+    devices.lamp.publishDps({ [code]: value }, { throttle: 50, immediate: true });
   };
 
   const handleReleaseWhite = (value: any) => {

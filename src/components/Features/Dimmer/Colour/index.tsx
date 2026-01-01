@@ -18,6 +18,8 @@ interface IProps {
     onChange?: (isColor: boolean, value: COLOUR) => void;
     setScrollEnabled?: (v: boolean) => void;
     currentLampName?: string;
+    radius?: number;
+    allDevices?: any[]; // לשימוש בעתיד אם נרצה לחבר ישירות
 }
 
 interface LampData {
@@ -27,20 +29,20 @@ interface LampData {
     saturation: number;
 }
 
-const WHEEL_RADIUS = 165;
+const DEFAULT_RADIUS = 165;
 
 const allKnownLamps: LampData[] = [
-    { id: 'lamp_1', name: 'מנורה 1', hue: 0, saturation: 1000 },
-    { id: 'lamp_2', name: 'מנורה 2', hue: 240, saturation: 1000 },
-    { id: 'lamp_3', name: 'מנורה 3', hue: 120, saturation: 800 },
+    { id: 'Device1', name: 'מנורה 1', hue: 0, saturation: 1000 },
+    { id: 'Device2', name: 'מנורה 2', hue: 240, saturation: 1000 },
+    { id: 'Device3', name: 'מנורה 3', hue: 120, saturation: 800 },
 ];
 
 export const Colour = (props: IProps) => {
-    const { style, className, onRelease, onChange, setScrollEnabled, currentLampName = 'מנורה 2', colour } = props;
+    const { style, className, onRelease, onChange, setScrollEnabled, currentLampName = 'מנורה 2', colour, radius = DEFAULT_RADIUS } = props;
 
     const support = useSupport();
     const [lamps, setLamps] = React.useState<LampData[]>(allKnownLamps);
-    const [activeLampId, setActiveLampId] = React.useState<string>('lamp_2');
+    const [activeLampId, setActiveLampId] = React.useState<string>('Device2');
     const [draggingId, setDraggingId] = React.useState<string | null>(null);
 
     const dragStartRef = React.useRef<{ id: string; startX: number; startY: number; initialPos: { x: number; y: number } } | null>(null);
@@ -78,7 +80,7 @@ export const Colour = (props: IProps) => {
 
     const getPosFromHS = (h: number, s: number) => {
         const angle = (h * Math.PI) / 180;
-        const dist = (s / 1000) * WHEEL_RADIUS;
+        const dist = (s / 1000) * radius;
         const x = Math.cos(angle) * dist;
         const y = Math.sin(angle) * dist;
         return { x, y };
@@ -86,12 +88,12 @@ export const Colour = (props: IProps) => {
 
     const getHSFromPos = (x: number, y: number) => {
         const dist = Math.sqrt(x * x + y * y);
-        const clampedDist = Math.min(dist, WHEEL_RADIUS);
+        const clampedDist = Math.min(dist, radius);
         let angle = Math.atan2(y, x);
         if (angle < 0) angle += 2 * Math.PI;
 
         const h = (angle * 180) / Math.PI;
-        const s = (clampedDist / WHEEL_RADIUS) * 1000;
+        const s = (clampedDist / radius) * 1000;
         return { h, s };
     };
 
@@ -188,8 +190,8 @@ export const Colour = (props: IProps) => {
             <View
                 className={styles.wheelContainer}
                 style={{
-                    width: WHEEL_RADIUS * 2,
-                    height: WHEEL_RADIUS * 2,
+                    width: radius * 2,
+                    height: radius * 2,
                     position: 'relative',
                 }}
             >
@@ -197,14 +199,14 @@ export const Colour = (props: IProps) => {
                 <View
                     className={styles.colorSpread}
                     style={{
-                        backgroundColor: 'transparent', // We'll use conic-gradient in CSS
-                        opacity: 0.5, // Static opacity
+                        width: radius * 2.8,
+                        height: radius * 2.8,
                     }}
                 />
 
                 {/* @ts-ignore */}
                 <LampCirclePickerColor
-                    radius={WHEEL_RADIUS}
+                    radius={radius}
                     hsColor={{ h: activeLamp?.hue || 0, s: activeLamp?.saturation || 0 }}
                     onTouchStart={handleWheelTouchStart}
                     onTouchMove={handleWheelMove}

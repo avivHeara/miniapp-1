@@ -3,17 +3,21 @@ import { View, Text, ScrollView, Image } from '@ray-js/ray';
 import { useActions, useProps } from '@ray-js/panel-sdk';
 import clsx from 'clsx';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectSavedScenes, updateScene } from '@/redux/modules/savedScenesSlice';
+import { showModal as showRayModal, showToast, showActionSheet } from '@ray-js/ray';
+import { selectSavedScenes, updateScene, deleteScene, setActiveScene, selectActiveSceneId, setEditingScene } from '@/redux/modules/savedScenesSlice';
 import styles from './index.module.less';
 
 interface Props {
     searchQuery: string;
+    onRelease: (code: string, value: any) => void;
+    onReleaseWhite: (cmd: any) => void;
+    onModeChange?: (mode: string) => void;
 }
 
-export const FixedModesLayout: React.FC<Props> = ({ searchQuery }) => {
+export const FixedModesLayout: React.FC<Props> = ({ searchQuery, onRelease, onReleaseWhite, onModeChange }) => {
     const scenes = useSelector(selectSavedScenes);
+    const activeSceneId = useSelector(selectActiveSceneId);
     const workMode = useProps(props => props.work_mode);
-    const sceneData = useProps(props => props.scene_data);
     const [expandedSection, setExpandedSection] = useState<'favorites' | 'scenes' | 'music'>('favorites');
 
     const filteredScenes = useMemo(() => {
@@ -39,7 +43,7 @@ export const FixedModesLayout: React.FC<Props> = ({ searchQuery }) => {
                 onToggle={() => toggleSection('favorites')}
                 count={favorites.length}
             >
-                <Carousel items={favorites} activeMode={workMode} activeSceneId={sceneData?.sceneId} />
+                <Carousel items={favorites} activeSceneId={activeSceneId} onRelease={onRelease} onReleaseWhite={onReleaseWhite} onModeChange={onModeChange} />
             </Section>
 
             {/* All Scenes Section */}
@@ -49,7 +53,7 @@ export const FixedModesLayout: React.FC<Props> = ({ searchQuery }) => {
                 onToggle={() => toggleSection('scenes')}
                 count={allScenes.length}
             >
-                <Carousel items={allScenes} activeMode={workMode} activeSceneId={sceneData?.sceneId} />
+                <Carousel items={allScenes} activeSceneId={activeSceneId} onRelease={onRelease} onReleaseWhite={onReleaseWhite} onModeChange={onModeChange} />
             </Section>
 
             {/* Music Section */}
@@ -59,7 +63,7 @@ export const FixedModesLayout: React.FC<Props> = ({ searchQuery }) => {
                 onToggle={() => toggleSection('music')}
                 count={musicScenes.length}
             >
-                <Carousel items={musicScenes} activeMode={workMode} activeSceneId={sceneData?.sceneId} />
+                <Carousel items={musicScenes} activeSceneId={activeSceneId} onRelease={onRelease} onReleaseWhite={onReleaseWhite} onModeChange={onModeChange} />
             </Section>
         </View>
     );
@@ -80,17 +84,17 @@ const Section = ({ title, isExpanded, onToggle, count, children }) => (
     </View>
 );
 
-const Carousel = ({ items, activeMode, activeSceneId }) => (
+const Carousel = ({ items, activeSceneId, onRelease, onReleaseWhite, onModeChange }) => (
     <ScrollView scrollX className={styles.carousel} showScrollbar={false}>
         <View className={styles.carouselInner}>
             {items.map(item => (
                 <ModeCard
                     key={item.id}
                     item={item}
-                    isActive={
-                        (item.category === 'music' && activeMode === 'music') ||
-                        (item.category !== 'music' && activeMode === 'scene' && activeSceneId === item.id)
-                    }
+                    isActive={activeSceneId === item.id}
+                    onRelease={onRelease}
+                    onReleaseWhite={onReleaseWhite}
+                    onModeChange={onModeChange}
                 />
             ))}
             {items.length === 0 && <Text className={styles.emptyText}>לא נמצאו תוצאות...</Text>}
@@ -98,67 +102,150 @@ const Carousel = ({ items, activeMode, activeSceneId }) => (
     </ScrollView>
 );
 
-const ModeCard = ({ item, isActive }) => {
+const ModeCard = ({ item, isActive, onRelease, onReleaseWhite, onModeChange }) => {
     const dispatch = useDispatch();
     const dpActions = useActions();
 
     const handleFavorite = (e) => {
-        e.stopPropagation();
+        if (e && e.stopPropagation) e.stopPropagation();
+        console.log('⭐ handleFavorite click detected for:', item.id, 'Current status:', item.isFavorite);
         dispatch(updateScene({ id: item.id, updates: { isFavorite: !item.isFavorite } }));
     };
 
-    const handleActivate = () => {
-        if (item.category === 'music') {
-            dpActions.work_mode.set('music');
+    const handleLongPress = () => {
+        const itemList = ['הפעל מצב', 'ערוך מצב'];
+        if (!item.id.startsWith('mock-')) {
+            itemList.push('מחק מצב');
+        }
+
+        showActionSheet({
+            itemList,
+            success: (res) => {
+                const action = itemList[res.tapIndex];
+                if (action === 'הפעל מצב') {
+                    handleActivate();
+                } else if (action === 'ערוך מצב') {
+                    handleEdit();
+                } else if (action === 'מחק מצב') {
+                    handleDelete();
+                }
+            }
+        });
+    };
+
+    const handleEdit = () => {
+        console.log('✏️ Opening SceneEditor for Rename:', item.id);
+        dispatch(setEditingScene(item.id));
+        // המעבר לטאב הכיוונון אינו חובה כאן כי ה-SceneEditor הוא Overlay על הכל
+        showToast({ title: 'מצב עריכה', icon: 'none' });
+    };
+
+    const handleTune = () => {
+        console.log('🔧 Entering Edit Mode for:', item.id);
+
+        // 1. הגדרת המצב כנמצא בעריכה
+        dispatch(setEditingScene(item.id));
+
+        // 2. הפעלת המצב (שליחת פקודות למנורה)
+        handleActivate();
+
+        // 3. מעבר לטאב הכיוונון (Adjustment) לפי סוג המצב
+        if (item.devices && item.devices.length > 0) {
+            const devMode = item.devices[0].mode || 'white';
+            onModeChange?.(devMode);
         } else {
-            dpActions.work_mode.set('scene');
-            if (item.id.startsWith('mock-')) {
-                // For mocks, we'd normally send specific scene data
-                // dpActions.scene_data.set({...});
+            onModeChange?.('white');
+        }
+
+        showToast({ title: 'מצב עריכה פעיל', icon: 'success' });
+    };
+
+    const handleDelete = () => {
+        showRayModal({
+            title: 'מחיקת מצב',
+            content: `האם אתה בטוח שברצונך למחוק את "${item.name}"?`,
+            cancelText: 'ביטול',
+            confirmText: 'מחק',
+            confirmColor: '#ff4d4f',
+            success: (res) => {
+                if (res.confirm) {
+                    dispatch(deleteScene(item.id));
+                    showToast({ title: 'המצב נמחק', icon: 'success' });
+                }
+            }
+        });
+    };
+
+    const handleActivate = () => {
+        console.log('🔮 [NEW VERSION] handleActivate triggering for:', item.id);
+        // עדכון UI
+        dispatch(setActiveScene(item.id));
+
+        // שינוי מצב עבודה דרך onRelease הבטוח
+        if (item.category === 'music') {
+            onRelease?.('work_mode', 'music');
+        } else {
+            onRelease?.('work_mode', 'scene');
+        }
+
+        // שליחת נתוני המנורה
+        if (item.devices && item.devices.length > 0) {
+            const dev = item.devices[0];
+            console.log('🔮 Sending data via onRelease:', dev);
+            if (dev.mode === 'white') {
+                onReleaseWhite?.({
+                    bright_value: dev.brightness,
+                    temp_value: dev.temperature
+                });
+            } else if (dev.mode === 'colour') {
+                onRelease?.('colour_data', {
+                    hue: dev.hue,
+                    saturation: dev.saturation,
+                    value: dev.value
+                });
             }
         }
+        showToast({ title: `הופעל: ${item.name}`, icon: 'success' });
     };
 
     return (
-        <View className={clsx(styles.card, isActive && styles.cardActive)} onClick={handleActivate}>
-            <View className={styles.cardImageContainer}>
-                {item.customImage && (
-                    <Image
-                        src={item.customImage}
-                        className={styles.cardImage}
-                        mode="aspectFill"
-                    />
-                )}
+        <View
+            className={clsx(styles.card, isActive && styles.cardActive)}
+            onClick={handleActivate}
+            onLongPress={handleLongPress}
+        >
+            <View className={styles.cardInner}>
+                <Image
+                    src={item.customImage || '/images/scene/generic.png'}
+                    className={styles.cardImage}
+                    mode="aspectFill"
+                />
                 <View className={styles.imageOverlay} />
 
-                {isActive && <View className={styles.activeBadge}><Text className={styles.activeText}>פעיל</Text></View>}
+                {/* באדג' פעיל */}
+                {isActive && (
+                    <View className={styles.activeBadge}>
+                        <Text className={styles.activeText}>פעיל</Text>
+                    </View>
+                )}
 
                 <View className={styles.cardHeader}>
+                    {/* כפתור מועדפים - נשאר גלוי למגע מהיר */}
                     <View className={styles.favoriteBtn} onClick={handleFavorite}>
                         <Text className={clsx(styles.starIcon, item.isFavorite && styles.starred)}>★</Text>
                     </View>
                 </View>
 
-                <View className={styles.iconOverlay}>
-                    <Text className={styles.modeIcon}>{getIconForMode(item.name || '')}</Text>
+                {/* מידע על הכרטיס */}
+                <View className={styles.cardContent}>
+                    <View className={styles.cardTexts}>
+                        <Text className={styles.cardName}>{item.name}</Text>
+                        <Text className={styles.cardDetails}>{item.devices?.length || 1} מנורות</Text>
+                    </View>
                 </View>
-            </View>
-
-            <View className={styles.cardInfo}>
-                <Text className={styles.cardName}>{item.name}</Text>
-                <Text className={styles.cardDetails}>{item.devices?.length || 1} מנורות</Text>
             </View>
         </View>
     );
 };
 
-const getIconForMode = (name: string) => {
-    const n = name.toLowerCase();
-    if (n.includes('ערב') || n.includes('רומנטי')) return '🌙';
-    if (n.includes('קריאה') || n.includes('ריכוז')) return '📖';
-    if (n.includes('מסיבה') || n.includes('ריקוד')) return '🎉';
-    if (n.includes('בוקר')) return '☀️';
-    if (n.includes('ארוחה')) return '🍽️';
-    if (n.includes('סרט')) return '🎬';
-    return '💡';
-};
+// getIconPath הוסר כבקשת המשתמש למראה נקי
