@@ -1,0 +1,90 @@
+@import '../../../variables.less';
+
+.container {
+    margin: 40rpx;
+    padding: 48rpx 40rpx;
+    background: @glass-bg;
+    border-radius: @radius-lg;
+    border: 1px solid @glass-border;
+    direction: rtl;
+}
+
+.title {
+    display: block;
+    font-size: 32rpx;
+    font-weight: 600;
+    color: @text-primary;
+    margin-bottom: 32rpx;
+    text-align: center;
+}
+
+.grid {
+    display: flex;
+    flex-direction: column;
+    gap: 32rpx;
+    margin-bottom: 40rpx;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 24rpx;
+}
+
+.label {
+    width: 110rpx;
+    font-size: 26rpx;
+    color: @text-secondary;
+}
+
+.sliderContainer {
+    flex: 1;
+    direction: ltr; // Fix thumb direction issue in RTL
+}
+
+.slider {
+    margin: 0;
+    height: 48rpx;
+}
+
+.value {
+    width: 90rpx;
+    font-size: 26rpx;
+    font-weight: 600;
+    color: @primary-color;
+    text-align: left;
+}
+
+.pickerBox {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20rpx;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pickerLabel {
+    font-size: 24rpx;
+    color: @text-secondary;
+}
+
+.pickerValueWrapper {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 8rpx 20rpx;
+    border-radius: @radius-md;
+    border: 1px solid @glass-border;
+}
+
+.pickerValue {
+    font-size: 22rpx;
+    color: @secondary-color;
+    font-weight: 600;
+    margin-left: 10rpx;
+}
+
+.pickerArrow {
+    font-size: 16rpx;
+    color: @text-tertiary;
+}

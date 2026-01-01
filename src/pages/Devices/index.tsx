@@ -8,7 +8,6 @@ import styles from './index.module.less';
  * - עריכת שמות מנורות (DP 111-113)
  * - תאורת לחצנים (DP 105)
  * - צימוד שלטים (DP 102, 106)
- * - סוג מנורה (DP 133)
  */
 
 export default function DevicesPage() {
@@ -18,7 +17,6 @@ export default function DevicesPage() {
     deviceName2: props.dev_name_2 ?? 'מנורה 2',
     deviceName3: props.dev_name_3 ?? 'מנורה 3',
     buttonLight: props.button_light ?? false,
-    lampType: props.sp ?? '0_None',
   }));
 
   const actions = useActions();
@@ -33,7 +31,7 @@ export default function DevicesPage() {
     if (name1 !== dpState.deviceName1) {
       actions.dev_name_1.set(name1);
     }
-    if (name2 !== dpState.deviceName2) {
+    if (name2 !== dpState.deviceName1) {
       actions.dev_name_2.set(name2);
     }
     if (name3 !== dpState.deviceName3) {
@@ -59,7 +57,6 @@ export default function DevicesPage() {
   };
 
   const clearPairing = () => {
-    // TODO: הוסף דיאלוג אישור
     actions.clear_pairing.set(true);
     console.log('Cleared pairing');
   };
@@ -69,7 +66,7 @@ export default function DevicesPage() {
       {/* עריכת שמות מנורות */}
       <View className={styles.section}>
         <Text className={styles.sectionTitle}>📝 שמות מנורות</Text>
-        
+
         <View className={styles.inputGroup}>
           <Text className={styles.inputLabel}>מנורה 1:</Text>
           <Input
@@ -113,7 +110,7 @@ export default function DevicesPage() {
         <Text className={styles.sectionTitle}>💡 תאורת לחצנים</Text>
         <View className={styles.toggleRow}>
           <Text className={styles.toggleLabel}>הפעל תאורת לחצנים פיזיים</Text>
-          <View 
+          <View
             className={`${styles.toggle} ${dpState.buttonLight ? styles.toggleOn : ''}`}
             onClick={toggleButtonLight}
           >
@@ -127,7 +124,7 @@ export default function DevicesPage() {
       {/* צימוד שלטים */}
       <View className={styles.section}>
         <Text className={styles.sectionTitle}>🎮 צימוד שלטים</Text>
-        
+
         <View className={styles.btnSecondary} onClick={startPairing}>
           <Text className={styles.btnText}>📡 התחל צימוד מכשיר</Text>
         </View>
@@ -145,7 +142,6 @@ export default function DevicesPage() {
       <View className={styles.debugSection}>
         <Text className={styles.debugTitle}>🔧 Debug</Text>
         <Text className={styles.debugText}>Button Light: {String(dpState.buttonLight)}</Text>
-        <Text className={styles.debugText}>Lamp Type: {dpState.lampType}</Text>
       </View>
     </ScrollView>
   );

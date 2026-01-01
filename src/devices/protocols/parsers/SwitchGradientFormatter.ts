@@ -1,7 +1,4 @@
-import { lampSchemaMap } from '@/devices/schema';
 import { transform } from './transform';
-
-const { switch_gradient } = lampSchemaMap;
 
 export default class SwitchGradientFormatter {
   uuid: string;
@@ -11,7 +8,7 @@ export default class SwitchGradientFormatter {
     off: number;
   };
 
-  constructor(uuid = switch_gradient.code, defaultValue = null) {
+  constructor(uuid = 'switch_gradient', defaultValue = null) {
     this.defaultValue = {
       version: 0,
       on: 800,

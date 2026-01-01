@@ -8,7 +8,7 @@ import { View, Image } from '@ray-js/ray';
 import clsx from 'clsx';
 import styles from './index.module.less';
 
-export type NavTab = 'lights' | 'timer' | 'shabbat' | '...';
+export type NavTab = 'lights' | 'timer' | 'shabbat' | 'lampSettings' | 'generalSettings';
 
 interface NavItem {
     key: NavTab;
@@ -29,13 +29,15 @@ const ICONS = {
     timer: (color: string) => getSvgDataUrl('<path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 3" />', color),
     shabbat: (color: string) => getSvgDataUrl('<path d="M19 4H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM16 2v4M8 2v4M3 10h18M12 14v4M10 16h4" />', color),
     more: (color: string) => getSvgDataUrl('<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 12h6" />', color),
+    gear: (color: string) => getSvgDataUrl('<path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />', color),
 };
 
 const NAV_ITEMS: NavItem[] = [
     { key: 'lights', label: 'מנורות', icon: 'lights' },
+    { key: 'lampSettings', label: 'עריכה', icon: 'more' },
     { key: 'timer', label: 'טיימר', icon: 'timer' },
     { key: 'shabbat', label: 'שבת', icon: 'shabbat' },
-    { key: 'more', label: 'עוד', icon: 'more' },
+    { key: 'generalSettings', label: 'הגדרות', icon: 'gear' },
 ];
 
 interface BottomNavProps {
@@ -50,7 +52,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
     onMorePress
 }) => {
     const handlePress = (tab: NavTab) => {
-        if (tab === 'more' && onMorePress) {
+        if (tab === 'generalSettings' && onMorePress) {
             onMorePress();
         } else {
             onChange(tab);

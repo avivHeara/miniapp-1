@@ -29,6 +29,7 @@ import {
   ModeTabs,
   SearchBar,
 } from '@/components';
+import { LampSettings } from '@/components/Features/LampSettings';
 import { Dimmer } from '@/components/Features/Dimmer';
 import { TimerFeature as TimerContent } from '@/components/Features/TimerFeature';
 import { SchedulingFeature as ShabbatContent } from '@/components/Features/SchedulingFeature';
@@ -288,6 +289,15 @@ export function Home(props: Props) {
             })}
           >
             <ShabbatContent onAdvancedPress={goToShabbatPage} />
+          </View>
+
+          {/* PERSISTENT LAMP SETTINGS TAB */}
+          <View
+            className={clsx({
+              [styles.hideTab]: activeNavTab !== 'lampSettings'
+            })}
+          >
+            <LampSettings />
           </View>
         </View>
       </ScrollView>
