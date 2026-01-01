@@ -252,6 +252,7 @@ export const Dimmer = React.memo((props: IProps) => {
             {editingSceneId && (
                 <SceneEditor
                     sceneId={editingSceneId}
+                    allDevices={allDevices}
                     onClose={() => dispatch(setEditingScene(null))}
                     onRelease={onRelease}
                     onReleaseWhite={onReleaseWhite}
@@ -336,6 +337,7 @@ export const Dimmer = React.memo((props: IProps) => {
                                 {...commonProps}
                                 colour={safeColour}
                                 currentLampName={deviceName}
+                                allDevices={allDevices}
                                 style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
                             />
                         </View>

@@ -19,7 +19,8 @@ interface IProps {
     setScrollEnabled?: (v: boolean) => void;
     currentLampName?: string;
     radius?: number;
-    allDevices?: any[]; // לשימוש בעתיד אם נרצה לחבר ישירות
+    allDevices?: any[];
+    showGlow?: boolean;
 }
 
 interface LampData {
@@ -38,7 +39,7 @@ const allKnownLamps: LampData[] = [
 ];
 
 export const Colour = (props: IProps) => {
-    const { style, className, onRelease, onChange, setScrollEnabled, currentLampName = 'מנורה 2', colour, radius = DEFAULT_RADIUS } = props;
+    const { style, className, onRelease, onChange, setScrollEnabled, currentLampName = 'מנורה 2', colour, radius = DEFAULT_RADIUS, allDevices, showGlow = true } = props;
 
     const support = useSupport();
     const [lamps, setLamps] = React.useState<LampData[]>(allKnownLamps);
@@ -53,6 +54,18 @@ export const Colour = (props: IProps) => {
     }, [currentLampName]);
 
     const lastHardwareColourRef = React.useRef(colour);
+    React.useEffect(() => {
+        if (allDevices && allDevices.length > 0) {
+            const mappedLamps = allDevices.map((d: any) => ({
+                id: d.deviceId,
+                name: d.deviceName,
+                hue: d.hue ?? (d.deviceId === 'Device1' ? 0 : d.deviceId === 'Device2' ? 240 : 120),
+                saturation: d.saturation ?? 1000
+            }));
+            setLamps(mappedLamps);
+        }
+    }, [allDevices]);
+
     React.useEffect(() => {
         if (!colour) return;
 
@@ -177,7 +190,12 @@ export const Colour = (props: IProps) => {
         }));
     };
 
-    const handleMarkerTouchEnd = () => {
+    const handleMarkerTouchEnd = (id: string) => () => {
+        const lamp = lamps.find(l => l.id === id);
+        if (lamp) {
+            const newData = { hue: lamp.hue, saturation: lamp.saturation, value: 1000 };
+            onRelease?.(colour_data.code, newData);
+        }
         setDraggingId(null);
         dragStartRef.current = null;
         if (setScrollEnabled) setScrollEnabled(true);
@@ -197,7 +215,7 @@ export const Colour = (props: IProps) => {
             >
                 {/* Dynamic Color Spread (Glow/Halo) */}
                 <View
-                    className={styles.colorSpread}
+                    className={clsx(styles.colorSpread, radius < DEFAULT_RADIUS && styles.small)}
                     style={{
                         width: radius * 2.8,
                         height: radius * 2.8,
@@ -236,8 +254,14 @@ export const Colour = (props: IProps) => {
                                 alignItems: 'center',
                             }}
                             onTouchStart={handleMarkerTouchStart(lamp.id)}
-                            onTouchMove={handleMarkerTouchMove}
-                            onTouchEnd={handleMarkerTouchEnd}
+                            onTouchMove={(e) => {
+                                handleMarkerTouchMove(e);
+                                const updatedLamp = lamps.find(l => l.id === lamp.id);
+                                if (updatedLamp) {
+                                    onChange?.(true, { hue: updatedLamp.hue, saturation: updatedLamp.saturation, value: 1000 });
+                                }
+                            }}
+                            onTouchEnd={handleMarkerTouchEnd(lamp.id)}
                         >
                             <View
                                 className={styles.marker}
