@@ -1,12 +1,8 @@
-/**
- * TimerFeature Component
- * תוכן טיימר מודרני בעיצוב נקי
- */
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, PickerView, PickerViewColumn, showToast, setStorage, getStorage } from '@ray-js/ray';
 import { useProps } from '@ray-js/panel-sdk';
 import { devices } from '@/devices';
+import { CyclicTimer } from './CyclicTimer';
 import styles from './index.module.less';
 
 interface Preset {
@@ -26,10 +22,10 @@ const DEFAULT_PRESETS: Preset[] = [
 const STORAGE_KEY = 'TIMER_PRESETS_V2';
 
 interface TimerFeatureProps {
-    onAdvancedPress?: () => void;
+    showAdvanced?: boolean;
 }
 
-export const TimerFeature: React.FC<TimerFeatureProps> = ({ onAdvancedPress }) => {
+export const TimerFeature: React.FC<TimerFeatureProps> = ({ showAdvanced }) => {
     const { countdownDp, power } = useProps(props => ({
         countdownDp: props.countdown || 0,
         power: props.switch_led || false,
@@ -117,6 +113,16 @@ export const TimerFeature: React.FC<TimerFeatureProps> = ({ onAdvancedPress }) =
 
     const isTimerActive = internalTime > 0;
 
+    // Advanced Mode View
+    if (showAdvanced) {
+        return (
+            <View className={styles.container}>
+                <CyclicTimer />
+            </View>
+        );
+    }
+
+    // Standard Mode View
     return (
         <View className={styles.container}>
             <View className={`${styles.activeWrapper} ${!isTimerActive ? styles.hide : ''}`}>
