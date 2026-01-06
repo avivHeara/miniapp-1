@@ -40,7 +40,7 @@ import type { NavTab, LightMode } from '@/components';
 import styles from './index.module.less';
 
 // ========== DEBUG LOG ==========
-console.log('🏠 HOME PAGE LOADED - VERSION 2.2');
+console.log('🏠 HOME PAGE LOADED - VERSION 2.3');
 
 const { control_data, colour_data } = lampSchemaMap;
 
@@ -49,19 +49,6 @@ interface Props {
   devInfo: DevInfo;
   extraInfo?: Record<string, any>;
 }
-
-// Helper for SVG Icons
-const getSvgDataUrl = (path: string, color: string) => {
-  const encodedColor = encodeURIComponent(color);
-  const svg = `<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="${color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${path}</g></svg>`;
-  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-};
-
-const ICONS = {
-  // Exchange icon for switching views
-  switch: '<path d="M16 3h5v5M4 20L21 3M21 16v5h-5M3 4l17 17M16 21H3v-5" />',
-  back: '<path d="M19 12H5M12 19l-7-7 7-7" />'
-};
 
 export function Home(props: Props) {
   const { devInfo } = props;
@@ -100,7 +87,6 @@ export function Home(props: Props) {
   }, [selectedDeviceKey, devName1, devName2, devName3]);
 
   const [activeNavTab, setActiveNavTab] = useState<NavTab>('lights');
-  const [showAdvancedTimer, setShowAdvancedTimer] = useState(false); // New State
   const [searchQuery, setSearchQuery] = useState('');
 
   const [activeLightMode, setActiveLightMode] = useState<LightMode>(() => {
@@ -151,11 +137,6 @@ export function Home(props: Props) {
     }
   };
 
-  const toggleAdvancedTimer = () => {
-    console.log('🔵 toggleAdvancedTimer clicked!');
-    setShowAdvancedTimer(prev => !prev);
-  };
-
   const goToShabbatPage = () => {
     console.log('🔵 goToShabbatPage clicked!');
     try {
@@ -186,8 +167,6 @@ export function Home(props: Props) {
   const handleNavTabChange = (tab: NavTab) => {
     console.log('🟢 handleNavTabChange:', tab);
     setActiveNavTab(tab);
-    // Reset advanced view when switching tabs
-    if (tab !== 'timer') setShowAdvancedTimer(false);
   };
 
   const handleColorChange = (isColour: boolean, data: any) => {
@@ -292,7 +271,7 @@ export function Home(props: Props) {
               [styles.hideTab]: activeNavTab !== 'timer'
             })}
           >
-            <TimerContent showAdvanced={showAdvancedTimer} />
+            <TimerContent />
           </View>
 
           {/* PERSISTENT SHABBAT TAB */}
@@ -325,24 +304,6 @@ export function Home(props: Props) {
       {/* ===== BOTTOM FIXED BUTTONS (Moved last to be on top) ===== */}
       {activeNavTab !== 'shabbat' && (
         <View className={styles.bottomFixedContainer}>
-          {/* Advanced Timer Button - Left Side, only for Timer tab */}
-          {activeNavTab === 'timer' && (
-            <View className={styles.extraBtnWrapper} onClick={toggleAdvancedTimer}>
-              <View className={styles.timerBtn}>
-                <Image
-                  src={getSvgDataUrl(
-                    // Show same switch icon but maybe different color or effect? 
-                    // User requested "Show same icon, no text".
-                    // I will use a nice 'Switch/Exchange' icon that implies toggling views.
-                    ICONS.switch,
-                    showAdvancedTimer ? '#4caf50' : '#00e5ff' // Green when active/advanced, Cyan when normal
-                  )}
-                  style={{ width: '56rpx', height: '56rpx' }}
-                />
-              </View>
-              {/* Text Removed as requested */}
-            </View>
-          )}
           {/* Show Power Button only in Adjustment modes (White/Colour) */}
           {(activeNavTab === 'lights' && activeLightMode !== 'scene') && <PowerButton />}
         </View>
